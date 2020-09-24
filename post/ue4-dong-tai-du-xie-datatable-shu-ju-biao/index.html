@@ -6,7 +6,7 @@
 <meta name="robots" content="all,follow">
 <meta name="googlebot" content="index,follow,snippet,archive">
 <title>蓝图实现任意类型数组排序 | 童年的琴-博客</title>
-<link rel="shortcut icon" href="https://xusjtuer.github.io/favicon.ico?v=1600937703880">
+<link rel="shortcut icon" href="https://xusjtuer.github.io/favicon.ico?v=1600939257424">
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
 <link rel="stylesheet" href="https://xusjtuer.github.io/styles/main.css" type='text/css' media='all'>
 
@@ -179,7 +179,7 @@
         <div class="entry-container">
           <div class="entry-content">
             <article>
-              <p><span style='color:black;background:white;font-size:24px;'><strong>在蓝图实现任意类型数组排序 Implementation of wildcard array sort in blueprint</strong></span></p>
+              <p><span style='color:black;background:white;font-size:28px;'><strong>蓝图实现任意类型数组排序 Implementation of wildcard array sort in blueprint</strong></span></p>
 <h2 id="1-overview">1. Overview</h2>
 <p>​	本教程旨在讲解在虚幻引擎(UE4)蓝图中实现任意类型的数组排序，也就是Array of Wildcard（通配符）类型数组排序的实现。本教程基于选择排序（Selection Sort）和冒泡排序（Bubble Sort）原理，在蓝图中实现了对任意类型数组（Generic TArray）的排序蓝图节点。</p>
 <h2 id="2-required-knowledge">2. Required Knowledge</h2>
@@ -191,7 +191,7 @@
 <h2 id="4-sort-approach">4. Sort Approach</h2>
 <p>（1）创建蓝图宏库，鼠标右键-&gt;Blueprints-&gt;Blueprint Macro Library -&gt;All Classes-&gt;Object，以UObject作为蓝图宏库的基类。<br>
 （2）My Blueprint窗口，Add New创建二个宏Select Sort、Bubble Sort；<br>
-（3）<strong>选择排序（Select Sort）</strong></p>
+（3）选择排序（Select Sort）</p>
 <blockquote>
 <p>Description：<br>
 选择排序(详情请查阅选择排序方法)<br>
@@ -201,10 +201,10 @@ bGreater=( Array[min] &gt;Array[i] ) ? true : false;<br>
 排序结束，返回有序数组</p>
 </blockquote>
 <figure data-type="image" tabindex="1"><img src="https://xusjtuer.github.io/post-images/1600934800484.jpg" alt="" loading="lazy"></figure>
-<center style="font-size:14px;color:#C0C0C0;text-decoration:underline">图1. 选择排序细节面板，（Array Pin 勾选Pass-by-Reference，以引用方式传递数据）；</center> 
-<p><code>选择排序（Selection Sort）蓝图宏实现方法</code><br>
+<center style="font-size:10px;color:#C0C0C0;text-decoration:none">图1. 选择排序细节面板，（Array Pin 勾选Pass-by-Reference，以引用方式传递数据）；</center> 
+<p><strong>选择排序（Selection Sort）蓝图宏实现方法</strong><br>
 <img src="https://xusjtuer.github.io/post-images/1600934826279.jpg" alt="" loading="lazy"></p>
-<p>（4）<strong>冒泡排序（Bubble Sort）</strong></p>
+<p>（4）冒泡排序（Bubble Sort）</p>
 <blockquote>
 <p>​	Description：冒泡排序(详情请查阅冒泡排序方法)<br>
 ​	bGreater=( Array[j] &gt;Array[j+1] ) ? true : false;<br>
@@ -213,29 +213,29 @@ bGreater=( Array[min] &gt;Array[i] ) ? true : false;<br>
 ​	排序结束，返回有序数组</p>
 </blockquote>
 <figure data-type="image" tabindex="2"><img src="https://xusjtuer.github.io/post-images/1600934846666.jpg" alt="" loading="lazy"></figure>
-<center style="font-size:14px;color:#C0C0C0;text-decoration:underline">图2. 冒泡排序细节面板，（Array Pin 勾选Pass-by-Reference，以引用方式传递数据）；</center> 
-<p><code>冒泡排序（Bubble Sort）蓝图宏实现方法!</code><br>
+<center style="font-size:10px;color:#C0C0C0;text-decoration:none">图2. 冒泡排序细节面板，（Array Pin 勾选Pass-by-Reference，以引用方式传递数据）；</center> 
+<p><strong>冒泡排序（Bubble Sort）蓝图宏实现方法!</strong><br>
 <img src="https://xusjtuer.github.io/post-images/1600934860136.jpg" alt="" loading="lazy"></p>
 <h2 id="5-usage">5. Usage</h2>
 <p>（1）以上第4步完成，即可任意蓝图中，context menu中输入sort关键词即可查找二个节点；<br>
 <img src="https://xusjtuer.github.io/post-images/1600934882299.gif" alt="" loading="lazy"></p>
-<center style="font-size:14px;color:#C0C0C0;text-decoration:underline">图3. 从蓝图中查找Bubble Sort/Selection Sort节点；</center> 
+<center style="font-size:10px;color:#C0C0C0;text-decoration:none">图3. 从蓝图中查找Bubble Sort/Selection Sort节点；</center> 
 <p>（2）任意类型连接示例，以Bubble Sort节点为例，并随意选取Actor、Struct、Float、int类型数组；<br>
 <img src="https://xusjtuer.github.io/post-images/1600934972893.gif" alt="" loading="lazy"></p>
-<center style="font-size:14px;color:#C0C0C0;text-decoration:underline">图4. 不同类型数组排序示例；</center> 
+<center style="font-size:10px;color:#C0C0C0;text-decoration:none">图4. 不同类型数组排序示例；</center> 
 <p>（3）排序节点连接方式示例，（数组元素类型必须包含可排序得变量，如float/int类型变量）；<br>
 <img src="https://xusjtuer.github.io/post-images/1600934999294.gif" alt="" loading="lazy"></p>
-<center style="font-size:14px;color:#C0C0C0;text-decoration:underline">图5. Item数组排序示例，Score变量为本例排序指定关键字；</center> 
+<center style="font-size:10px;color:#C0C0C0;text-decoration:none">图5. Item数组排序示例，Score变量为本例排序指定关键字；</center> 
 <p>（4）排序方向，升序/降序示例<br>
 <img src="https://xusjtuer.github.io/post-images/1600935068632.png" alt="" loading="lazy"></p>
-<center style="font-size:14px;color:#C0C0C0;text-decoration:underline">图6. a. 返回升序数组；</center> 
+<center style="font-size:10px;color:#C0C0C0;text-decoration:none">图6. a. 返回升序数组；</center> 
 <figure data-type="image" tabindex="3"><img src="https://xusjtuer.github.io/post-images/1600935092707.png" alt="" loading="lazy"></figure>
-<center style="font-size:14px;color:#C0C0C0;text-decoration:underline">图7.b. 返回降序数组；</center> 
+<center style="font-size:10px;color:#C0C0C0;text-decoration:none">图7.b. 返回降序数组；</center> 
 <p>（5）二个以上排序变量蓝图引脚连接示例，这种情况最好自定义一个排序方法（Pure），如下图所示</p>
 <figure data-type="image" tabindex="4"><img src="https://xusjtuer.github.io/post-images/1600935113971.png" alt="" loading="lazy"></figure>
-<center style="font-size:14px;color:#C0C0C0;text-decoration:underline">图8.蓝图引脚连接示例；</center> 
+<center style="font-size:10px;color:#C0C0C0;text-decoration:none">图8.蓝图引脚连接示例；</center> 
 <figure data-type="image" tabindex="5"><img src="https://xusjtuer.github.io/post-images/1600935176031.png" alt="" loading="lazy"></figure>
-<center style="font-size:14px;color:#C0C0C0;text-decoration:underline">图9.二个排序排序变量，大小比较方法示例，并该函数设置成Pure；</center> 
+<center style="font-size:10px;color:#C0C0C0;text-decoration:none">图9.二个排序排序变量，大小比较方法示例，并该函数设置成Pure；</center> 
 <h2 id="6-shortage">6. Shortage</h2>
 <p>由于冒泡排序和选择排序本身就属于低效的排序算法，此外相较于c++，蓝图执行效率差得多，因此以上二个蓝图排序宏节点只适合于长度较小的数组排序（length&lt;100）。若数组长度超过一定值时，执行以上排序节点程序会直接停止运行，并显示以下错误提示。</p>
 <blockquote>
@@ -284,7 +284,7 @@ Function /Game/Blueprints/BP_HttpActotr.BP_HttpActotr_C:ExecuteUbergraph_BP_Http
           </div>
           <div class="author-meta">
             <div class="author">
-              <img alt='' src="https://xusjtuer.github.io/images/avatar.png?v=1600937703880" class='avatar avatar-72 photo' height='72' width='72'>
+              <img alt='' src="https://xusjtuer.github.io/images/avatar.png?v=1600939257424" class='avatar avatar-72 photo' height='72' width='72'>
               <span>WRITTEN BY: &nbsp;&nbsp;&nbsp;<a href='https://xusjtuer.github.io'></a> </span>
             </div>
             <div class="bio">
