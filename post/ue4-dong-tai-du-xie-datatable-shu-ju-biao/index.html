@@ -6,7 +6,7 @@
 <meta name="robots" content="all,follow">
 <meta name="googlebot" content="index,follow,snippet,archive">
 <title>在蓝图实现任意类型数组排序 | 童年的琴-博客</title>
-<link rel="shortcut icon" href="https://xusjtuer.github.io/favicon.ico?v=1600919122741">
+<link rel="shortcut icon" href="https://xusjtuer.github.io/favicon.ico?v=1600921760306">
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
 <link rel="stylesheet" href="https://xusjtuer.github.io/styles/main.css" type='text/css' media='all'>
 
@@ -152,10 +152,10 @@
 	内部循环根据bGreater(bool)值判断是否交换Array[min]与Array[i]成员位置
 	排序结束，返回有序数组
 </code></pre>
-<figure data-type="image" tabindex="1"><img src="img/%7B3AAFC42F-5111-4466-A525-8B1C8986A7C1%7D_20200408210901-1600914036261.jpg" alt="{3AAFC42F-5111-4466-A525-8B1C8986A7C1}_20200408210901" loading="lazy"></figure>
+<p>![selection sort details](https://xusjtuer.github.io/post-images/post1_img/selection sort details.jpg)</p>
 <div align = "center">选择排序细节面板，（Array Pin 勾选Pass-by-Reference，以引用方式传递数据）；</div>
 <p><code>选择排序（Selection Sort）蓝图宏实现方法</code></p>
-<figure data-type="image" tabindex="2"><img src="img/%7B13A85D2A-0EBC-4E40-978C-79E61A8BC015%7D_20200408210651.jpg" alt="{13A85D2A-0EBC-4E40-978C-79E61A8BC015}_20200408210651" loading="lazy"></figure>
+<p>![selection sort macro](https://xusjtuer.github.io/post-images/post1_img/selection sort macro.jpg)</p>
 <p>（4）<strong>冒泡排序（Bubble Sort）</strong></p>
 <pre><code class="language-text">	Description：冒泡排序(详情请查阅冒泡排序方法)
 	bGreater=( Array[j] &gt;Array[j+1] ) ? true : false;
@@ -163,29 +163,29 @@
 	内部循环根据bGreater(bool)值判断是否交换Array[j]与Array[j+1]成员位置
 	排序结束，返回有序数组
 </code></pre>
-<figure data-type="image" tabindex="3"><img src="img/%7B8EC94B60-53A2-4B47-B530-0A775EE57DEF%7D_20200408210844.jpg" alt="{8EC94B60-53A2-4B47-B530-0A775EE57DEF}_20200408210844" loading="lazy"></figure>
+<p>![selection sort macro](https://xusjtuer.github.io/post-images/post1_img/selection sort macro-1600921468341.jpg)</p>
 <div align = "center">冒泡排序细节面板，（Array Pin 勾选Pass-by-Reference，以引用方式传递数据）；</div>
 <p><code>冒泡排序（Bubble Sort）蓝图宏实现方法!</code></p>
-<figure data-type="image" tabindex="4"><img src="img/%7B902C4434-B7C6-4968-9083-3336699B417E%7D_20200408210504-1600914161930.jpg" alt="{902C4434-B7C6-4968-9083-3336699B417E}_20200408210504" loading="lazy"></figure>
+<p>![bubble sort macro](https://xusjtuer.github.io/post-images/post1_img/bubble sort macro.jpg)</p>
 <h2 id="5-usage">5. Usage</h2>
 <p>（1）以上第4步完成，即可任意蓝图中，context menu中输入sort关键词即可查找二个节点；</p>
-<figure data-type="image" tabindex="5"><img src="img/GetSortNode.gif" alt="GetSortNode" loading="lazy"></figure>
+<figure data-type="image" tabindex="1"><img src="https://xusjtuer.github.io/post-images/post1_img/GetSortNode.gif" alt="GetSortNode" loading="lazy"></figure>
 <div align = "center"> 从蓝图中查找Bubble Sort/Selection Sort节点</div>
 <p>（2）任意类型连接示例，以Bubble Sort节点为例，并随意选取Actor、Struct、Float、int类型数组；</p>
-<figure data-type="image" tabindex="6"><img src="img/LinkPin.gif" alt="LinkPin" loading="lazy"></figure>
+<figure data-type="image" tabindex="2"><img src="https://xusjtuer.github.io/post-images/post1_img/GetSortNode-1600921508128.gif" alt="GetSortNode" loading="lazy"></figure>
 <div align = "center"> 不同类型数组排序示例</div>
 <p>（3）排序节点连接方式示例，（数组元素类型必须包含可排序得变量，如float/int类型变量）；</p>
-<figure data-type="image" tabindex="7"><img src="img/ArraySortExp.gif" alt="ArraySortExp" loading="lazy"></figure>
+<figure data-type="image" tabindex="3"><img src="img/ArraySortExp-1600919944397.gif" alt="ArraySortExp" loading="lazy"></figure>
 <div align = "center"> Item数组排序示例，Score变量为本例排序指定关键字</div>
 <p>（4）排序方向，升序/降序示例</p>
-<figure data-type="image" tabindex="8"><img src="img/v2-9f0e0a06bfec1d138a742e92457dccf1.png" alt="img" loading="lazy"></figure>
+<figure data-type="image" tabindex="4"><img src="img/v2-9f0e0a06bfec1d138a742e92457dccf1-1600919961460.png" alt="Ascending_order" loading="lazy"></figure>
 <div align = "center"> a. 返回升序数组</div>
-<figure data-type="image" tabindex="9"><img src="img/v2-7c4ed415396beb9f24d958ee233769c5.png" alt="img" loading="lazy"></figure>
+<figure data-type="image" tabindex="5"><img src="img/v2-7c4ed415396beb9f24d958ee233769c5-1600920042382.png" alt="Descending order" loading="lazy"></figure>
 <div align = "center"> b. 返回降序数组</div>
 <p>（5）二个以上排序变量Pin连接示例，这种情况最好自定义一个排序方法（Pure），如下图所示</p>
-<figure data-type="image" tabindex="10"><img src="img/v2-3f63f6c98bdaa18e8ac4387311fe94c4.png" alt="img" loading="lazy"></figure>
+<figure data-type="image" tabindex="6"><img src="img/v2-3f63f6c98bdaa18e8ac4387311fe94c4-1600920109570.png" alt="link pin of campare by" loading="lazy"></figure>
 <div align = "center"> Pin连接示例</div>
-<figure data-type="image" tabindex="11"><img src="img/compareby.png" alt="compareby" loading="lazy"></figure>
+<figure data-type="image" tabindex="7"><img src="img/compareby-1600920151652.png" alt="compareby" loading="lazy"></figure>
 <div align = "center"> 二个排序排序变量，大小比较方法示例，并该函数设置成Pure</div>
 <h2 id="6-shortage">6. Shortage</h2>
 <p>由于冒泡排序和选择排序本身就属于低效的排序算法，此外相较于c++，蓝图执行效率差得多，因此以上二个蓝图排序宏节点只</p>
@@ -220,7 +220,7 @@ Function /Game/Blueprints/BP_HttpActotr.BP_HttpActotr_C:ExecuteUbergraph_BP_Http
           </div>
           <div class="author-meta">
             <div class="author">
-              <img alt='' src="https://xusjtuer.github.io/images/avatar.png?v=1600919122741" class='avatar avatar-72 photo' height='72' width='72'>
+              <img alt='' src="https://xusjtuer.github.io/images/avatar.png?v=1600921760306" class='avatar avatar-72 photo' height='72' width='72'>
               <span>WRITTEN BY: &nbsp;&nbsp;&nbsp;<a href='https://xusjtuer.github.io'></a> </span>
             </div>
             <div class="bio">
