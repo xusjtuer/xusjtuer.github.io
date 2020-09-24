@@ -6,7 +6,7 @@
 
 <title>蓝图实现任意类型数组排序 | 童年的琴-博客</title>
 
-<link rel="shortcut icon" href="https://xusjtuer.github.io/favicon.ico?v=1600941614562">
+<link rel="shortcut icon" href="https://xusjtuer.github.io/favicon.ico?v=1600944242165">
 
 <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://xusjtuer.github.io/styles/main.css">
@@ -77,7 +77,7 @@
             
         </div>
         <div style="text-align: center">
-            <form id="gridea-search-form" style="position: relative" data-update="1600941614562" action="/search/index.html">
+            <form id="gridea-search-form" style="position: relative" data-update="1600944242165" action="/search/index.html">
                 <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
                 <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
             </form>
@@ -116,13 +116,13 @@
                 <div class="post-content">
                     <p><span style='color:black;background:white;font-size:24px;'><strong>蓝图实现任意类型数组排序 Implementation of wildcard array sort in blueprint</strong></span></p>
 <h2 id="1-overview">1. Overview</h2>
-<p>​本教程旨在讲解在虚幻引擎(UE4)蓝图中实现任意类型的数组排序，也就是Array of Wildcard（通配符）类型数组排序的实现。本教程基于选择排序（Selection Sort）和冒泡排序（Bubble Sort）原理，在蓝图中实现了对任意类型数组（Generic TArray）的排序蓝图节点。</p>
+<p>​本教程旨在讲解在虚幻引擎(UE4)蓝图（blueprint）中实现<code>任意类型</code>的数组排序，也就是实现泛型数组排序，在UE4的蓝图系统中用Wildcard（通配符）表示泛型。本教程基于选择排序（Selection Sort）和冒泡排序（Bubble Sort）原理，利用蓝图宏，实现了对任意类型数组（Generic TArray）排序的蓝图宏节点。</p>
 <h2 id="2-required-knowledge">2. Required Knowledge</h2>
 <p>​		(1) 基本熟悉ue4，了解蓝图宏库（Blueprint Macro Library）的创建方法；<br>
 ​		(2) Selection Sort 和 Bubble Sort 排序原理；</p>
 <h2 id="3-why">3. Why</h2>
-<p>​UE4并未对数组（TArray）提供排序的通用蓝图节点，而对于数组的排序可以说是开发中无可避免的问题。虽然在C++中可以轻易调用C++标准库的排序算法，并使用UFUNCTION(BlueprintCallable)，将其暴露给蓝图，但是这种情况下，每一种类型的数据都要定义一个C++版排序函数。对于随时新增加的类型（UStruct/UObject派生类） 这种方式即增加了非必要、无法通用的代码，又增加了冗余。 如果可以用一个节点来完成对任意类型数组排序，显然有极大的好处。<br>
-此外，虽然可以在c++使用（通配符）来实现数组排序，但是其实现过程较为复杂、繁琐，门框过高。还可能存在通用性问题，无法对int，float，struct，object及其派生类（Actor）等都适用。</p>
+<p>​UE4的蓝图系统并未内置数组排序（Array Sort）的蓝图节点，但是对数组进行排序可以说是开发中无可避免的问题。虽然在使用C++进行开发时，可以轻易调用C++ STL的排序算法，并使用宏UFUNCTION(BlueprintCallable)，将其暴露给蓝图；但是这种处理方式，对于随时新增加的类型（UStruct/UObject派生类），每一种类型的数据都要自定义一个C++版排序函数。既耗费了不必要代码修改和编译时间，又增加了代码冗余。 如果可以用一个节点来完成对任意类型数组排序，显然有极大的好处。<br>
+此外，虽然可以在UE4 C++中使用Wildcard 变量来实现数组排序，但是其实现过程较为复杂、繁琐，门框过高。还可能存在适用性的问题，可能无法同时对int，float，struct，object及其派生类（Actor）等都适用。</p>
 <h2 id="4-sort-approach">4. Sort Approach</h2>
 <p>（1）创建蓝图宏库，鼠标右键-&gt;Blueprints-&gt;Blueprint Macro Library -&gt;All Classes-&gt;Object，以UObject作为蓝图宏库的基类。<br>
 （2）My Blueprint窗口，Add New创建二个宏Select Sort、Bubble Sort；<br>
@@ -156,7 +156,7 @@ bGreater=( Array[min] &gt;Array[i] ) ? true : false;<br>
 <p>（1）以上第4步完成，即可任意蓝图中，context menu中输入sort关键词即可查找二个节点；<br>
 <img src="https://xusjtuer.github.io/post-images/1600934882299.gif" alt="" loading="lazy"></p>
 <center style="font-size:10px;color:#C0C0C0;text-decoration:none">图5. 从蓝图中查找Bubble Sort/Selection Sort节点；</center> <br />
-<p>（2）任意类型连接示例，以Bubble Sort节点为例，并随意选取Actor、Struct、Float、Int类型数组；<br>
+<p>（2）任意类型数组引脚（pin）连接示例，下图以Bubble Sort节点为例，并随意选取Actor、Struct、Float、Int类型数组；<br>
 <img src="https://xusjtuer.github.io/post-images/1600934972893.gif" alt="" loading="lazy"></p>
 <center style="font-size:10px;color:#C0C0C0;text-decoration:none">图6. 不同类型数组排序示例；</center> <br />
 <p>（3）排序节点连接方式示例，（数组元素类型必须包含可排序得变量，如float/int类型变量）；<br>
@@ -164,16 +164,16 @@ bGreater=( Array[min] &gt;Array[i] ) ? true : false;<br>
 <center style="font-size:10px;color:#C0C0C0;text-decoration:none">图7. Item数组排序示例，Score变量为本例排序指定关键字；</center> <br />
 <p>（4）排序方向，升序/降序示例<br>
 <img src="https://xusjtuer.github.io/post-images/1600935068632.png" alt="" loading="lazy"></p>
-<center style="font-size:10px;color:#C0C0C0;text-decoration:none">图8. a. 返回升序数组；</center> <br />
+<center style="font-size:10px;color:#C0C0C0;text-decoration:none">图8.  a. 返回升序数组；</center> <br />
 <figure data-type="image" tabindex="3"><img src="https://xusjtuer.github.io/post-images/1600935092707.png" alt="" loading="lazy"></figure>
-<center style="font-size:10px;color:#C0C0C0;text-decoration:none">图9.b. 返回降序数组；</center> <br />
-<p>（5）二个以上排序变量蓝图引脚连接示例，这种情况最好自定义一个排序方法（Pure），如下图所示</p>
+<center style="font-size:10px;color:#C0C0C0;text-decoration:none">图9. b. 返回降序数组；</center> <br />
+<p>（5）二个以上排序变量蓝图引脚连接示例，该类情形最好自定义一个比较函数（Pure函数），如下图所示</p>
 <figure data-type="image" tabindex="4"><img src="https://xusjtuer.github.io/post-images/1600935113971.png" alt="" loading="lazy"></figure>
 <center style="font-size:10px;color:#C0C0C0;text-decoration:none">图10. 蓝图引脚连接示例；</center> <br />
 <figure data-type="image" tabindex="5"><img src="https://xusjtuer.github.io/post-images/1600935176031.png" alt="" loading="lazy"></figure>
 <center style="font-size:10px;color:#C0C0C0;text-decoration:none">图11. 二个排序排序变量，大小比较方法示例，并该函数设置成Pure；</center> <br />
 <h2 id="6-shortage">6. Shortage</h2>
-<p>由于冒泡排序和选择排序本身就属于低效的排序算法，此外相较于c++，蓝图执行效率差得多，因此以上二个蓝图排序宏节点只适合于长度较小的数组排序（length&lt;100）。若数组长度超过一定值时，执行以上排序节点程序会直接停止运行，并显示以下错误提示。</p>
+<p>由于冒泡排序和选择排序本身就属于低效的排序算法，此外相较于c++，蓝图执行效率差得多，因此以上二个蓝图泛型排序节点应当只用于长度较小的数组排序（length&lt;100）。若数组长度超过一定值时，会产生明显的卡顿，甚至会直接停止运行，并显示以下错误提示。</p>
 <blockquote>
 <p><mark>LogScript: Warning: <strong>Runaway loop detected (over 1,000,000 iterations)</strong> - see log for stack trace<br>
 BP_HttpActotr_C /Game/Maps/UEDPIE_0_BeginMap.BeginMap:PersistentLevel.BP_HttpActotr_2<br>
@@ -181,6 +181,7 @@ Function /Game/Blueprints/BP_HttpActotr.BP_HttpActotr_C:ExecuteUbergraph_BP_Http
 <p><span style="color:red;font-size:12;font-family:字体;">PIE: Error: Infinite loop detected. Blueprint:  BP_HttpActotr Function:  Branch Call Stack:  Show</span></p>
 </blockquote>
 <h2 id="7-conclusion">7. Conclusion</h2>
+<p>本文主要介绍使用UE4 蓝图宏实现任意类型数组排序的蓝图节点，可以在数组长度较小的情形下，对数组进行排序。由于排序算法和蓝图节点执行的效率均比较低，因此不建议在数组长度大的情形，使用以上节点进行排序。</p>
 <p><em><strong>原创文章，未经允许，禁止转载</strong></em></p>
 
                 </div>
