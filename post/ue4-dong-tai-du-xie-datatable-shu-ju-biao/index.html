@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="robots" content="all,follow">
 <meta name="googlebot" content="index,follow,snippet,archive">
-<title>在蓝图实现任意类型数组排序 | 童年的琴-博客</title>
-<link rel="shortcut icon" href="https://xusjtuer.github.io/favicon.ico?v=1600921760306">
+<title>蓝图实现任意类型数组排序 | 童年的琴-博客</title>
+<link rel="shortcut icon" href="https://xusjtuer.github.io/favicon.ico?v=1600932593434">
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
 <link rel="stylesheet" href="https://xusjtuer.github.io/styles/main.css" type='text/css' media='all'>
 
@@ -127,7 +127,7 @@
           
         </div>
         <div class='entry-header'>
-          <h1 class='entry-title'>在蓝图实现任意类型数组排序</h1>
+          <h1 class='entry-title'>蓝图实现任意类型数组排序</h1>
         </div>
         <div class="entry-container">
           <div class="entry-content">
@@ -145,17 +145,17 @@
 <p>（1）创建蓝图宏库，鼠标右键-&gt;Blueprints-&gt;Blueprint Macro Library -&gt;All Classes-&gt;Object，以UObject作为蓝图宏库的基类。</p>
 <p>（2）My Blueprint窗口，Add New创建二个宏Select Sort、Bubble Sort；</p>
 <p>（3）<strong>选择排序（Select Sort）</strong></p>
-<pre><code>	Description：
-	选择排序(详情请查阅选择排序方法)
-	bGreater=( Array[min] &gt;Array[i] ) ? true : false;
-	将Array[min]与Array[i]成员的大小比较结果连接上bGreater(pin)
-	内部循环根据bGreater(bool)值判断是否交换Array[min]与Array[i]成员位置
-	排序结束，返回有序数组
+<pre><code>Description：
+选择排序(详情请查阅选择排序方法)
+bGreater=( Array[min] &gt;Array[i] ) ? true : false;
+将Array[min]与Array[i]成员的大小比较结果连接上bGreater(pin)
+内部循环根据bGreater(bool)值判断是否交换Array[min]与Array[i]成员位置
+排序结束，返回有序数组
 </code></pre>
-<p>![selection sort details](https://xusjtuer.github.io/post-images/post1_img/selection sort details.jpg)</p>
+<figure data-type="image" tabindex="1"><img src="https://xusjtuer.github.io/post-images/1600923775830.jpg" alt="" loading="lazy"></figure>
 <div align = "center">选择排序细节面板，（Array Pin 勾选Pass-by-Reference，以引用方式传递数据）；</div>
 <p><code>选择排序（Selection Sort）蓝图宏实现方法</code></p>
-<p>![selection sort macro](https://xusjtuer.github.io/post-images/post1_img/selection sort macro.jpg)</p>
+<figure data-type="image" tabindex="2"><img src="https://xusjtuer.github.io/post-images/1600923791908.jpg" alt="" loading="lazy"></figure>
 <p>（4）<strong>冒泡排序（Bubble Sort）</strong></p>
 <pre><code class="language-text">	Description：冒泡排序(详情请查阅冒泡排序方法)
 	bGreater=( Array[j] &gt;Array[j+1] ) ? true : false;
@@ -163,29 +163,28 @@
 	内部循环根据bGreater(bool)值判断是否交换Array[j]与Array[j+1]成员位置
 	排序结束，返回有序数组
 </code></pre>
-<p>![selection sort macro](https://xusjtuer.github.io/post-images/post1_img/selection sort macro-1600921468341.jpg)</p>
+<figure data-type="image" tabindex="3"><img src="https://xusjtuer.github.io/post-images/1600923804523.jpg" alt="" loading="lazy"></figure>
 <div align = "center">冒泡排序细节面板，（Array Pin 勾选Pass-by-Reference，以引用方式传递数据）；</div>
 <p><code>冒泡排序（Bubble Sort）蓝图宏实现方法!</code></p>
-<p>![bubble sort macro](https://xusjtuer.github.io/post-images/post1_img/bubble sort macro.jpg)</p>
+<figure data-type="image" tabindex="4"><img src="https://xusjtuer.github.io/post-images/1600923814270.jpg" alt="" loading="lazy"></figure>
 <h2 id="5-usage">5. Usage</h2>
 <p>（1）以上第4步完成，即可任意蓝图中，context menu中输入sort关键词即可查找二个节点；</p>
-<figure data-type="image" tabindex="1"><img src="https://xusjtuer.github.io/post-images/post1_img/GetSortNode.gif" alt="GetSortNode" loading="lazy"></figure>
+<figure data-type="image" tabindex="5"><img src="https://xusjtuer.github.io/post-images/1600923923328.gif" alt="" loading="lazy"></figure>
 <div align = "center"> 从蓝图中查找Bubble Sort/Selection Sort节点</div>
 <p>（2）任意类型连接示例，以Bubble Sort节点为例，并随意选取Actor、Struct、Float、int类型数组；</p>
-<figure data-type="image" tabindex="2"><img src="https://xusjtuer.github.io/post-images/post1_img/GetSortNode-1600921508128.gif" alt="GetSortNode" loading="lazy"></figure>
+<figure data-type="image" tabindex="6"><img src="https://xusjtuer.github.io/post-images/1600923941749.gif" alt="" loading="lazy"></figure>
 <div align = "center"> 不同类型数组排序示例</div>
 <p>（3）排序节点连接方式示例，（数组元素类型必须包含可排序得变量，如float/int类型变量）；</p>
-<figure data-type="image" tabindex="3"><img src="img/ArraySortExp-1600919944397.gif" alt="ArraySortExp" loading="lazy"></figure>
 <div align = "center"> Item数组排序示例，Score变量为本例排序指定关键字</div>
 <p>（4）排序方向，升序/降序示例</p>
-<figure data-type="image" tabindex="4"><img src="img/v2-9f0e0a06bfec1d138a742e92457dccf1-1600919961460.png" alt="Ascending_order" loading="lazy"></figure>
+<figure data-type="image" tabindex="7"><img src="img/v2-9f0e0a06bfec1d138a742e92457dccf1-1600919961460.png" alt="Ascending_order" loading="lazy"></figure>
 <div align = "center"> a. 返回升序数组</div>
-<figure data-type="image" tabindex="5"><img src="img/v2-7c4ed415396beb9f24d958ee233769c5-1600920042382.png" alt="Descending order" loading="lazy"></figure>
+<figure data-type="image" tabindex="8"><img src="img/v2-7c4ed415396beb9f24d958ee233769c5-1600920042382.png" alt="Descending order" loading="lazy"></figure>
 <div align = "center"> b. 返回降序数组</div>
 <p>（5）二个以上排序变量Pin连接示例，这种情况最好自定义一个排序方法（Pure），如下图所示</p>
-<figure data-type="image" tabindex="6"><img src="img/v2-3f63f6c98bdaa18e8ac4387311fe94c4-1600920109570.png" alt="link pin of campare by" loading="lazy"></figure>
+<figure data-type="image" tabindex="9"><img src="img/v2-3f63f6c98bdaa18e8ac4387311fe94c4-1600920109570.png" alt="link pin of campare by" loading="lazy"></figure>
 <div align = "center"> Pin连接示例</div>
-<figure data-type="image" tabindex="7"><img src="img/compareby-1600920151652.png" alt="compareby" loading="lazy"></figure>
+<figure data-type="image" tabindex="10"><img src="img/compareby-1600920151652.png" alt="compareby" loading="lazy"></figure>
 <div align = "center"> 二个排序排序变量，大小比较方法示例，并该函数设置成Pure</div>
 <h2 id="6-shortage">6. Shortage</h2>
 <p>由于冒泡排序和选择排序本身就属于低效的排序算法，此外相较于c++，蓝图执行效率差得多，因此以上二个蓝图排序宏节点只</p>
@@ -220,7 +219,7 @@ Function /Game/Blueprints/BP_HttpActotr.BP_HttpActotr_C:ExecuteUbergraph_BP_Http
           </div>
           <div class="author-meta">
             <div class="author">
-              <img alt='' src="https://xusjtuer.github.io/images/avatar.png?v=1600921760306" class='avatar avatar-72 photo' height='72' width='72'>
+              <img alt='' src="https://xusjtuer.github.io/images/avatar.png?v=1600932593434" class='avatar avatar-72 photo' height='72' width='72'>
               <span>WRITTEN BY: &nbsp;&nbsp;&nbsp;<a href='https://xusjtuer.github.io'></a> </span>
             </div>
             <div class="bio">
