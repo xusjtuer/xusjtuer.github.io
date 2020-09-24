@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="robots" content="all,follow">
 <meta name="googlebot" content="index,follow,snippet,archive">
-<title>关于 | 童年的琴-博客</title>
+<title>在蓝图实现任意类型数组排序 | 童年的琴-博客</title>
 <link rel="shortcut icon" href="https://xusjtuer.github.io/favicon.ico?v=1600919122741">
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
 <link rel="stylesheet" href="https://xusjtuer.github.io/styles/main.css" type='text/css' media='all'>
@@ -127,18 +127,77 @@
           
         </div>
         <div class='entry-header'>
-          <h1 class='entry-title'>关于</h1>
+          <h1 class='entry-title'>在蓝图实现任意类型数组排序</h1>
         </div>
         <div class="entry-container">
           <div class="entry-content">
             <article>
-              <blockquote>
-<p>欢迎来到我的小站呀，很高兴遇见你！🤝</p>
+              <p><strong>在蓝图实现任意类型数组排序 Implementation of wildcard array sort in blueprint</strong></p>
+<h2 id="1-overview">1. Overview</h2>
+<p>本教程旨在讲解在虚幻引擎(UE4)蓝图中实现任意类型的数组排序，也就是Array of Wildcard（通配符）类型数组排序的实现。本教程基于选择排序（Selection Sort）和冒泡排序（Bubble Sort）原理，在蓝图中实现了对任意类型数组（Generic TArray）的排序蓝图节点。</p>
+<h2 id="2-required-knowledge">2. Required Knowledge</h2>
+<p>​		(1) 基本熟悉ue4，了解蓝图宏库（Blueprint Macro Library）的创建方法；<br>
+​		(2) Selection Sort 和 Bubble Sort 排序原理；</p>
+<h2 id="3-why">3. Why</h2>
+<p>UE4并未对数组（TArray）提供排序的通用蓝图节点，而对于数组的排序可以说是开发中无可避免的问题。虽然在C++中可以轻易调用C++标准库的排序算法，并使用UFUNCTION(BlueprintCallable)，将其暴露给蓝图，但是这种情况下，每一种类型的数据都要定义一个C++版排序函数。对于随时新增加的类型（UStruct/UObject派生类） 这种方式即增加了非必要、无法通用的代码，又增加了冗余。 如果可以用一个节点来完成对任意类型数组排序，显然有极大的好处。</p>
+<p>此外，虽然可以在c++使用（通配符）来实现数组排序，但是其实现过程较为复杂、繁琐，门框过高。还可能存在通用性问题，无法对int，float，struct，object及其派生类（Actor）等都适用。</p>
+<h2 id="4-sort-approach">4. Sort Approach</h2>
+<p>（1）创建蓝图宏库，鼠标右键-&gt;Blueprints-&gt;Blueprint Macro Library -&gt;All Classes-&gt;Object，以UObject作为蓝图宏库的基类。</p>
+<p>（2）My Blueprint窗口，Add New创建二个宏Select Sort、Bubble Sort；</p>
+<p>（3）<strong>选择排序（Select Sort）</strong></p>
+<pre><code>	Description：
+	选择排序(详情请查阅选择排序方法)
+	bGreater=( Array[min] &gt;Array[i] ) ? true : false;
+	将Array[min]与Array[i]成员的大小比较结果连接上bGreater(pin)
+	内部循环根据bGreater(bool)值判断是否交换Array[min]与Array[i]成员位置
+	排序结束，返回有序数组
+</code></pre>
+<figure data-type="image" tabindex="1"><img src="img/%7B3AAFC42F-5111-4466-A525-8B1C8986A7C1%7D_20200408210901-1600914036261.jpg" alt="{3AAFC42F-5111-4466-A525-8B1C8986A7C1}_20200408210901" loading="lazy"></figure>
+<div align = "center">选择排序细节面板，（Array Pin 勾选Pass-by-Reference，以引用方式传递数据）；</div>
+<p><code>选择排序（Selection Sort）蓝图宏实现方法</code></p>
+<figure data-type="image" tabindex="2"><img src="img/%7B13A85D2A-0EBC-4E40-978C-79E61A8BC015%7D_20200408210651.jpg" alt="{13A85D2A-0EBC-4E40-978C-79E61A8BC015}_20200408210651" loading="lazy"></figure>
+<p>（4）<strong>冒泡排序（Bubble Sort）</strong></p>
+<pre><code class="language-text">	Description：冒泡排序(详情请查阅冒泡排序方法)
+	bGreater=( Array[j] &gt;Array[j+1] ) ? true : false;
+	将Array[j]与Array[j+1]的大小比较结果连接上bGreater(pin)
+	内部循环根据bGreater(bool)值判断是否交换Array[j]与Array[j+1]成员位置
+	排序结束，返回有序数组
+</code></pre>
+<figure data-type="image" tabindex="3"><img src="img/%7B8EC94B60-53A2-4B47-B530-0A775EE57DEF%7D_20200408210844.jpg" alt="{8EC94B60-53A2-4B47-B530-0A775EE57DEF}_20200408210844" loading="lazy"></figure>
+<div align = "center">冒泡排序细节面板，（Array Pin 勾选Pass-by-Reference，以引用方式传递数据）；</div>
+<p><code>冒泡排序（Bubble Sort）蓝图宏实现方法!</code></p>
+<figure data-type="image" tabindex="4"><img src="img/%7B902C4434-B7C6-4968-9083-3336699B417E%7D_20200408210504-1600914161930.jpg" alt="{902C4434-B7C6-4968-9083-3336699B417E}_20200408210504" loading="lazy"></figure>
+<h2 id="5-usage">5. Usage</h2>
+<p>（1）以上第4步完成，即可任意蓝图中，context menu中输入sort关键词即可查找二个节点；</p>
+<figure data-type="image" tabindex="5"><img src="img/GetSortNode.gif" alt="GetSortNode" loading="lazy"></figure>
+<div align = "center"> 从蓝图中查找Bubble Sort/Selection Sort节点</div>
+<p>（2）任意类型连接示例，以Bubble Sort节点为例，并随意选取Actor、Struct、Float、int类型数组；</p>
+<figure data-type="image" tabindex="6"><img src="img/LinkPin.gif" alt="LinkPin" loading="lazy"></figure>
+<div align = "center"> 不同类型数组排序示例</div>
+<p>（3）排序节点连接方式示例，（数组元素类型必须包含可排序得变量，如float/int类型变量）；</p>
+<figure data-type="image" tabindex="7"><img src="img/ArraySortExp.gif" alt="ArraySortExp" loading="lazy"></figure>
+<div align = "center"> Item数组排序示例，Score变量为本例排序指定关键字</div>
+<p>（4）排序方向，升序/降序示例</p>
+<figure data-type="image" tabindex="8"><img src="img/v2-9f0e0a06bfec1d138a742e92457dccf1.png" alt="img" loading="lazy"></figure>
+<div align = "center"> a. 返回升序数组</div>
+<figure data-type="image" tabindex="9"><img src="img/v2-7c4ed415396beb9f24d958ee233769c5.png" alt="img" loading="lazy"></figure>
+<div align = "center"> b. 返回降序数组</div>
+<p>（5）二个以上排序变量Pin连接示例，这种情况最好自定义一个排序方法（Pure），如下图所示</p>
+<figure data-type="image" tabindex="10"><img src="img/v2-3f63f6c98bdaa18e8ac4387311fe94c4.png" alt="img" loading="lazy"></figure>
+<div align = "center"> Pin连接示例</div>
+<figure data-type="image" tabindex="11"><img src="img/compareby.png" alt="compareby" loading="lazy"></figure>
+<div align = "center"> 二个排序排序变量，大小比较方法示例，并该函数设置成Pure</div>
+<h2 id="6-shortage">6. Shortage</h2>
+<p>由于冒泡排序和选择排序本身就属于低效的排序算法，此外相较于c++，蓝图执行效率差得多，因此以上二个蓝图排序宏节点只</p>
+<p>适合于长度较小的数组排序（length&lt;100）。若数组长度超过一定值时，执行以上排序节点程序会直接停止运行，并显示以下错误提示。</p>
+<blockquote>
+<p><mark>LogScript: Warning: <strong>Runaway loop detected (over 1,000,000 iterations)</strong> - see log for stack trace<br>
+BP_HttpActotr_C /Game/Maps/UEDPIE_0_BeginMap.BeginMap:PersistentLevel.BP_HttpActotr_2<br>
+Function /Game/Blueprints/BP_HttpActotr.BP_HttpActotr_C:ExecuteUbergraph_BP_HttpActotr:0250</mark></p>
+<p><span style="color:red;font-size:12;font-family:字体;">PIE: Error: Infinite loop detected. Blueprint:  BP_HttpActotr Function:  Branch Call Stack:  Show</span></p>
 </blockquote>
-<h2 id="关于本站">🏠 关于本站</h2>
-<h2 id="博主是谁">👨‍💻 博主是谁</h2>
-<h2 id="兴趣爱好">⛹ 兴趣爱好</h2>
-<h2 id="联系我呀">📬 联系我呀</h2>
+<h2 id="7-conclusion">7. Conclusion</h2>
+<p><em><strong>原创文章，未经允许，禁止转载</strong></em></p>
 
             </article>
           </div>
@@ -186,6 +245,13 @@
             </div>
           </div>
         </div>
+          
+            <nav class="navigation pagination" role="navigation">
+              <h2 class="screen-reader-text">Posts navigation</h2>
+              <div class="nav-links">
+                <a class="next page-numbers" href="https://xusjtuer.github.io/post/hello-gridea/">下一篇->Hello Gridea</a>
+              </div>
+            </nav>
           
       </div>
       <section id="comments" class="comments">
