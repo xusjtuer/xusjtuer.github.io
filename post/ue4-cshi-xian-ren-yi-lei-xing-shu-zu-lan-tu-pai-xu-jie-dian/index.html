@@ -1,0 +1,353 @@
+<html>
+<head>
+    <meta charset="utf-8"/>
+<meta name="description" content=""/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+<title>UE4 C++实现任意类型数组蓝图排序节点（Quick Sort） | 童年的琴-博客</title>
+
+<link rel="shortcut icon" href="https://xusjtuer.github.io/favicon.ico?v=1601077593963">
+
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://xusjtuer.github.io/styles/main.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css">
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dockerfile.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dart.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/moment@2.27.0/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"></script>
+<!-- DEMO JS -->
+<!--<script src="media/scripts/index.js"></script>-->
+
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <nav class="navbar navbar-expand-lg">
+    <div class="navbar-brand">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            童年的琴-博客
+        </div>
+    </div>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+                <div class="nav-item">
+                    
+                        <a href="/" class="menu gt-a-link">
+                            首页
+                        </a>
+                    
+                </div>
+            
+                <div class="nav-item">
+                    
+                        <a href="/archives" class="menu gt-a-link">
+                            归档
+                        </a>
+                    
+                </div>
+            
+                <div class="nav-item">
+                    
+                        <a href="/tags" class="menu gt-a-link">
+                            标签
+                        </a>
+                    
+                </div>
+            
+                <div class="nav-item">
+                    
+                        <a href="/post/about" class="menu gt-a-link">
+                            关于
+                        </a>
+                    
+                </div>
+            
+        </div>
+        <div style="text-align: center">
+            <form id="gridea-search-form" style="position: relative" data-update="1601077593963" action="/search/index.html">
+                <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+                <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    UE4 C++实现任意类型数组蓝图排序节点（Quick Sort）
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2020-09-14 ·
+                    </time>
+                    
+                        <a href="https://xusjtuer.github.io/tag/chYkJdpez/" class="post-tags">
+                            # ue4 c++
+                        </a>
+                    
+                        <a href="https://xusjtuer.github.io/tag/I_n8ZHBFK/" class="post-tags">
+                            # blueprint
+                        </a>
+                    
+                        <a href="https://xusjtuer.github.io/tag/Gia1fWeOMs/" class="post-tags">
+                            # sort
+                        </a>
+                    
+                        <a href="https://xusjtuer.github.io/tag/I8veTBffD8/" class="post-tags">
+                            # generic
+                        </a>
+                    
+                </div>
+                <div class="post-content">
+                    <h2 id="1-overview"><strong>1. Overview</strong></h2>
+<p>本教程旨在讲解在虚幻引擎(UE4) C++中实现蓝图(Blueprint)可调用的任意类型数组排序的蓝图节点。纯蓝图实现任意类型数组排序方法，请查看***第1期 在蓝图实现任意类型数组排序*。以下泛型数组排序节点Array_Sort基于快速排序算法（Quick Sort）原理，冒泡排序（Bubble Sort）版见知乎链接：<a href="https://zhuanlan.zhihu.com/p/144880580">第2期 UE4 C++实现任意类型数组蓝图排序节点</a>。编者水平有限，如有错漏敬请谅解。</p>
+<h2 id="2-quick-sortbubble-sort-蓝图宏排序比较"><strong>2. Quick Sort/Bubble Sort /蓝图宏排序比较</strong></h2>
+<p>排序算法是开发过程中常用的一类算法，使用ue4进行开发不可避免的要用到排序算法。若仅使用ue4 c++进行内容开发，可以直接调用c++ stl中的排序算法，就可以实现数组排序。由于ue4 c++本身并没给蓝图系统(Blueprint System)提供任意类型数组排序的节点，因此当同时使用ue4 c++和Blueprint(BP)完成逻辑功能，如何在ue4 c++ 中实现一个任意类型数组排序蓝图节点，就成为一个值得深究的问题。</p>
+<p>本文主要讲解ue4 c++实现任意类型数组排序的蓝图节点方法和原理，以及该节点在Blueprint中的使用方法。</p>
+<h2 id="5-sort-approach"><strong>5. Sort Approach</strong></h2>
+<p><strong>5.1 基于SortBy Function，实现泛型数组排序</strong></p>
+<p>.h文件，函数声明：</p>
+<pre><code class="language-c++">	/** Generic sort array by function using quick sort algorithm.
+	*
+	*	@param	Array	Target array to sort
+	*	@param	Object	The owner of  CompareBy function,(DefaultToSelf)
+	*	@param	SortBy	Function name of overloads operator &quot;&lt;&quot; function
+							The signature of the comparison function should be equivalent to the following:
+							bool cmp(const Type1 &amp;a, const Type2 &amp;b); return value should named &quot;ReturnValue&quot;(bool)
+	*/
+	UFUNCTION(BlueprintCallable, CustomThunk, meta = (DisplayName = &quot;Sort Array by Function&quot;, CompactNodeTitle = &quot;Sort&quot;, ArrayParm = &quot;Array&quot;, AutoCreateRefTerm = &quot;Array&quot;, DefaultToSelf = &quot;Object&quot;, AdvancedDisplay = &quot;Object&quot;), Category = &quot;Utilities|Array&quot;)
+		static void Array_SortV1(const TArray&lt;int32&gt;&amp; Array, UObject* Object, FName SortBy);
+
+	// generic quick sort array by function name
+	static void GenericArray_SortByFunction(UObject* OwnerObject, UFunction* ComparedBy, void* TargetArray, UArrayProperty* ArrayProp);
+	// Low  --&gt; Starting index,  High  --&gt; Ending index
+	static void QuickSortByFunction_Recursive(UObject* OwnerObject, UFunction* ComparedBy, UProperty* InnerProp, FScriptArrayHelper&amp; ArrayHelper, int32 Low, int32 High);
+	// swapping items in place and partitioning the section of an array
+	static int32 QuickSortByFunction_Partition(UObject* OwnerObject, UFunction* ComparedBy, UProperty* InnerProp, FScriptArrayHelper&amp; ArrayHelper, int32 Low, int32 High);
+	// Check that the CompareBy function is appropriate
+	static bool IsSuitableFunction(UFunction* ComparedBy, UArrayProperty* ArrayProp);
+</code></pre>
+<p><strong>.h文件，Array_SortV1函数的自定义CustomThunk函数体</strong></p>
+<pre><code class="language-c++">	// sort array by function name
+	DECLARE_FUNCTION(execArray_SortV1)
+	{
+		Stack.MostRecentProperty = nullptr;
+		Stack.StepCompiledIn&lt;UArrayProperty&gt;(NULL);
+		void* ArrayAAddr = Stack.MostRecentPropertyAddress;
+		UArrayProperty* ArrayProperty = Cast&lt;UArrayProperty&gt;(Stack.MostRecentProperty);
+		if (!ArrayProperty)
+		{
+			Stack.bArrayContextFailed = true;
+			return;
+		}
+
+		P_GET_OBJECT(UObject, OwnerObject);
+		P_GET_PROPERTY(UNameProperty, SortBy);
+		if (!OwnerObject)
+		{
+			return;
+		}
+		UFunction* const SortFunction = OwnerObject-&gt;FindFunction(SortBy);
+		if ((!SortFunction || (SortFunction-&gt;NumParms != 3)))
+		{
+			return;
+		}
+
+		P_FINISH;
+
+		P_NATIVE_BEGIN;
+		GenericArray_SortByFunction(OwnerObject, SortFunction, ArrayAAddr, ArrayProperty);
+		P_NATIVE_END;
+	}
+</code></pre>
+<p>.cpp文件，GenericArray_SortByFunction()函数体</p>
+<pre><code class="language-c++">void UGenericArrayLibrary::GenericArray_SortByFunction(UObject* OwnerObject, UFunction* ComparedBy, void* TargetArray, UArrayProperty* ArrayProp)
+{
+	if (!ComparedBy || !OwnerObject || !TargetArray)
+	{
+		return;
+	}
+	else if (!IsSuitableFunction(ComparedBy, ArrayProp))
+	{
+		return;
+	}
+	// Optimal
+	UKismetArrayLibrary::GenericArray_Shuffle(TargetArray, ArrayProp);
+	// Begin sort array
+	FScriptArrayHelper ArrayHelper(ArrayProp, TargetArray);
+
+	if (ArrayHelper.Num() &lt; 2)
+	{
+		return;
+	}
+	else
+	{
+		UProperty* InnerProp = ArrayProp-&gt;Inner;
+		QuickSortByFunction_Recursive(OwnerObject, ComparedBy, InnerProp, ArrayHelper, 0, ArrayHelper.Num() - 1);
+	}
+}
+</code></pre>
+<p><strong>其中，快排算法优化：</strong></p>
+<pre><code class="language-c++">	// Optimal
+	UKismetArrayLibrary::GenericArray_Shuffle(TargetArray, ArrayProp);
+</code></pre>
+<p><strong>//cpp文件，快排递归循环</strong></p>
+<pre><code class="language-c++">void UGenericArrayLibrary::QuickSortByFunction_Recursive(UObject* OwnerObject, UFunction* ComparedBy, UProperty* InnerProp, FScriptArrayHelper&amp; ArrayHelper, int32 Low, int32 High)
+{
+	if (Low &lt; High)
+	{
+		int32 Pivot = QuickSortByFunction_Partition(OwnerObject, ComparedBy, InnerProp, ArrayHelper, Low, High);
+		QuickSortByFunction_Recursive(OwnerObject, ComparedBy, InnerProp, ArrayHelper, Low, Pivot - 1);
+		QuickSortByFunction_Recursive(OwnerObject, ComparedBy, InnerProp, ArrayHelper, Pivot + 1, High);
+	}
+}
+</code></pre>
+<p><strong>//.cpp文件，快排拆分</strong></p>
+<pre><code class="language-c++">int32 UGenericArrayLibrary::QuickSortByFunction_Partition(UObject* OwnerObject, UFunction* ComparedBy, UProperty* InnerProp, FScriptArrayHelper&amp; ArrayHelper, int32 Low, int32 High)
+{
+	const int32 PropertySize = InnerProp-&gt;ElementSize * InnerProp-&gt;ArrayDim;
+	UBoolProperty* ReturnProp = Cast&lt;UBoolProperty&gt;(ComparedBy-&gt;GetReturnProperty());
+
+	// CompareBy function parameters address, 2 input parameter(array item) and 1 return parameter (bool)
+	uint8* FuncParamsAddr = (uint8*)FMemory::Malloc(ComparedBy-&gt;ParmsSize); /// note:ParamsSize = PropertySize* 2 +1
+
+	FMemory::Memzero(FuncParamsAddr, ComparedBy-&gt;ParmsSize);
+
+	/** Based on quick sort of stl */
+	InnerProp-&gt;CopyCompleteValueFromScriptVM(FuncParamsAddr, ArrayHelper.GetRawPtr(High)); //Params1: LastSmallElem = Array[High]
+
+	int32 i = Low - 1;
+	for (int32 j = Low; j &lt; High; j++)
+	{
+		InnerProp-&gt;CopyCompleteValueFromScriptVM(FuncParamsAddr + PropertySize, ArrayHelper.GetRawPtr(j)); // Param2: Array[i]
+		OwnerObject-&gt;ProcessEvent(ComparedBy, FuncParamsAddr);
+		if (ReturnProp &amp;&amp; ReturnProp-&gt;GetPropertyValue(FuncParamsAddr + PropertySize * 2))
+		{
+			i++;
+			ArrayHelper.SwapValues(i, j);
+		}
+	}
+	ArrayHelper.SwapValues(i + 1, High);
+	// release memory
+	FMemory::Free(FuncParamsAddr);
+
+	return i + 1;
+}
+</code></pre>
+<p><strong>//.cpp文件，判断用于比较数组元素大小的蓝图函数是否合适</strong></p>
+<pre><code class="language-c++">bool UGenericArrayLibrary::IsSuitableFunction(UFunction* ComparedBy, UArrayProperty* ArrayProp)
+{
+	// check CompareBy function's parameter number
+	if ((!ComparedBy || (ComparedBy-&gt;NumParms != 3)))
+	{
+		UE_LOG(LogTemp, Warning, TEXT(&quot;IsSuitableFunction -&gt; CompareBy function should only have 3 parameters !&quot;));
+		return false;
+	}
+
+	//Get return property of CompareBy function.
+	UBoolProperty* ReturnProp = Cast&lt;UBoolProperty&gt;(ComparedBy-&gt;GetReturnProperty());
+	if (!ReturnProp)
+	{
+		/// The return Property of max function must be bool and named &quot;ReturnValue&quot;
+		UE_LOG(LogTemp, Warning, TEXT(&quot;IsSuitableFunction -&gt; Return value of CompareBy function should be bool type, and named ReturnValue.&quot;));
+		return false;
+	}
+
+	// Get all parameters of CompareBy function
+	TArray&lt;UProperty*&gt; ParamterList;
+	for (TFieldIterator&lt;UProperty&gt; It(ComparedBy); It; ++It)
+	{
+		UProperty* FuncParameter = *It;
+		ParamterList.Emplace(FuncParameter);
+	}
+	// Make sure the first/second input parameters of Compare function is same to array inner
+	if (!ParamterList[0]-&gt;SameType(ArrayProp-&gt;Inner) || !ParamterList[1]-&gt;SameType(ArrayProp-&gt;Inner))
+	{
+		/// The  property of 1st input parameter of max function must be same as array member
+		UE_LOG(LogTemp, Warning, TEXT(&quot;IsSuitableFunction -&gt; The parameters type of CompareBy should be same to array member.&quot;));
+		return false;
+	}
+	return true;
+}
+</code></pre>
+<p><strong>5.2 基于SortBy Property，实现泛型数组排序</strong></p>
+<h2 id="6-conclusion">6. Conclusion</h2>
+<p>本文主要介绍了二种 ue4 c++实现任意类型数组排序蓝图节点的方法，用于满足日常开发的蓝图排序需求。由于二者均为冒泡排序原理，算法效率一般低于的stl排序算法。</p>
+<p><strong>进阶版：基于stl排序算法的任意类型数组排序节点的实现，待完成。</strong></p>
+
+                </div>
+            </article>
+        </div>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="https://xusjtuer.github.io/post/ue4-dong-tai-du-xie-datatable-shu-ju-biao/" class="post-title gt-a-link">
+                    UE4 蓝图实现任意类型数组排序
+                </a>
+            </div>
+        
+
+        
+
+        
+
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first">海阔凭鱼跃，天高任鸟飞</div>
+    <div class="social-container">
+        
+            
+                <a href="https://github.com/xusjtuer" target="_blank">
+                    <i class="fab fa-github gt-c-content-color-first"></i>
+                </a>
+            
+        
+            
+        
+            
+        
+            
+                <a href="https://www.zhihu.com/people/tong-nian-de-qin" target="_blank">
+                    <i class="fab fa-zhihu gt-c-content-color-first"></i>
+                </a>
+            
+        
+            
+        
+            
+        
+    </div>
+    <div class="footer-info">
+        Powered by <a href="https://github.com/xusjtuer" target="_blank">xusjtuer</a>
+    </div>
+    <div>
+        Theme by <a href="https://imhanjie.com/" target="_blank">imhanjie</a>, Powered by <a
+                href="https://github.com/getgridea/gridea" target="_blank">Gridea | <a href="https://xusjtuer.github.io/atom.xml" target="_blank">RSS</a></a>
+    </div>
+</div>
+
+<script>
+  hljs.initHighlightingOnLoad()
+</script>
+
+    </div>
+</div>
+</body>
+</html>
