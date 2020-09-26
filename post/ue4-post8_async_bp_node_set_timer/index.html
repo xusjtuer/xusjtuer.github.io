@@ -1,0 +1,510 @@
+<html>
+<head>
+    <meta charset="utf-8"/>
+<meta name="description" content=""/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+<title>UE4 异步蓝图节点设计与实现 | 童年的琴-博客</title>
+
+<link rel="shortcut icon" href="https://xusjtuer.github.io/favicon.ico?v=1601121217886">
+
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://xusjtuer.github.io/styles/main.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css">
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dockerfile.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dart.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/moment@2.27.0/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"></script>
+<!-- DEMO JS -->
+<!--<script src="media/scripts/index.js"></script>-->
+
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <nav class="navbar navbar-expand-lg">
+    <div class="navbar-brand">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            童年的琴-博客
+        </div>
+    </div>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+                <div class="nav-item">
+                    
+                        <a href="/" class="menu gt-a-link">
+                            首页
+                        </a>
+                    
+                </div>
+            
+                <div class="nav-item">
+                    
+                        <a href="/archives" class="menu gt-a-link">
+                            归档
+                        </a>
+                    
+                </div>
+            
+                <div class="nav-item">
+                    
+                        <a href="/tags" class="menu gt-a-link">
+                            标签
+                        </a>
+                    
+                </div>
+            
+                <div class="nav-item">
+                    
+                        <a href="/post/about" class="menu gt-a-link">
+                            关于
+                        </a>
+                    
+                </div>
+            
+        </div>
+        <div style="text-align: center">
+            <form id="gridea-search-form" style="position: relative" data-update="1601121217886" action="/search/index.html">
+                <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+                <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    UE4 异步蓝图节点设计与实现
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2020-09-14 ·
+                    </time>
+                    
+                        <a href="https://xusjtuer.github.io/tag/2V2Y7FEXB/" class="post-tags">
+                            # async
+                        </a>
+                    
+                        <a href="https://xusjtuer.github.io/tag/5dIdXS3uyw/" class="post-tags">
+                            # blueprint node
+                        </a>
+                    
+                        <a href="https://xusjtuer.github.io/tag/JrUtWvQeQr/" class="post-tags">
+                            # set timer
+                        </a>
+                    
+                        <a href="https://xusjtuer.github.io/tag/chYkJdpez/" class="post-tags">
+                            # ue4 c++
+                        </a>
+                    
+                </div>
+                <div class="post-content">
+                    <p><strong>摘要</strong>：函数的异步调用是编程过程中一种常见的调用方式，虽然虚幻引擎拥有强大的蓝图系统，但是在处理异步调用时，现有的蓝图节点却常常束手无策。本教程旨讲解在ue4中设计并实现异步蓝图节点的全流程，以实现具有计时、可取消延迟Delay、同时处理N个对象的异步调用等多个功能的异步蓝图节点SetTimer为例，逐一解析异蓝图节点从需求、设计、实现、应用各个过程。</p>
+<p><strong>关键字</strong>：虚幻引擎；蓝图；异步；定时器</p>
+<h2 id="design-and-implementation-of-asynchronous-blueprint-node">Design and Implementation of Asynchronous Blueprint Node</h2>
+<p><strong>Abstract</strong>：Asynchronous calling of functions is a common calling way in the programming process. Although Unreal Engine has a powerful blueprint system, the existing blueprint nodes are often at a loss for handling asynchronous call processes. This tutorial aims to explain the whole process of designing and implementing asynchronous blueprint nodes in ue4.Taking the custom asynchronous blueprint node SetTimer, which has the functions of timing, delay, and asynchronous call of N objects at the same time, as an example. Analyze each process of asynchronous blueprint nodes from requirements, design, implementation, and application one by one.</p>
+<p><strong>Key words</strong>: Unreal Engine; Blueprint; Async; Timer</p>
+<h1 id="1-introduction">1. Introduction</h1>
+<p>使用ue4开发时，常常会遇到异步调用情形；在上一个函数A执行结束，才触发下一个函数B，且函数A是一个多帧执行的持续过程，比如移动到目标点。若函数A在执行时被中止，则函数B不执行，换言之函数B应该是可被取消的延迟调用。对于单个对象的上述情形，使用蓝图系统中Set Timer By Event节点不难解决；若是同时处理N个不同类型对象的异步调用，则内置的蓝图节点难以应对。</p>
+<p>利用ue4蓝图系统中内置节点完成简单异步调用包含以下方式：</p>
+<ol>
+<li>Delay：等待一定时间，再执行下一个函数；缺点： Delay未结束前，Delay之后的逻辑被阻塞；且无法取消Delay后面的事件；</li>
+<li>Timeline：Timeline功能较为完善，包含Play、Stop、Reverse等功能；缺点：只能在Actor及其派生类中使用，无法在Object、UMG等其他类蓝图中使用；无法动态添加；</li>
+<li>SetTimerByEvent / SetTimerByFunctionName：支持绑定事件，支持Pause、Unpause、Clear，计时等功能；缺点：无法同时处理多个对象的异步过程。</li>
+<li>Tick：Tick时，执行多帧持续性的逻辑；满足结束条件后，调用回调事件逻辑；缺点：需要独立封装。</li>
+</ol>
+<p>利用ue4 c++中实现异步蓝图函数包含以下方式：</p>
+<ol>
+<li>使用UFunction宏中的Latent关键字，标识该蓝图函数为Latent function(潜伏事件)，在函数体内创建一个FPendingLatentAction派生类的实例并初始化，异步操作的主要过程均在派生类实例上完成。内置蓝图节点的Delay、MoveComponentTo等均采用这类方法。</li>
+<li>继承UBlueprintAsyncActionBase类，重写派生类的函数；内置蓝图节点DownloadImage节点属于此类。</li>
+<li>Tick和蓝图Tick一样，需要单独封装。</li>
+</ol>
+<p>ue4的异步与非异步的蓝图节点在外观上有一个明显的不同，就是异步蓝图节点右上角存时钟标记；使用时，异步蓝图节点可以在EventGraph/Macros中使用，但是无法在蓝图函数（FunctionGraph）中使用。由于异步节点被调用时，可能同时存在多个任务，所以与一般的蓝图节点只有一对输入输出执行流引脚不同，异步节点可能拥有多个执行流引脚；一对执行流引脚用于继续执行主逻辑，其他执行流引脚用于处理异步过程结束后的返回结果，这样而不至于阻塞程序主要逻辑的执行。<br>
+<img src="https://xusjtuer.github.io/post-images/1601118059867.jpg" alt="" loading="lazy"></p>
+<center style="font-size:10px;color:#C0C0C0;text-decoration:none">图1. 异步和非异步蓝图节点；</center> <br />
+<h1 id="2-design">2. Design</h1>
+<p>由上一小节不难得出结论：<strong>[需求]</strong> 若要同时处理N个对象的异步调用，引擎内置的蓝图节点是难以满足需求的，因此设计并实现一个具有这样功能的蓝图节点是十分必要的。Set Timer By Event支持Pause、Unpause、Clear等功能，也可以等效地被封装成一个可取消的Delay节点；但是由于SetTimerByEevent节点的Delegate是一个无参数的委托，因此在处理N个对象的时候，无法确定是哪一个对象完成了Delay过程。<strong>[设计]</strong> 假设我们把Set Timer By Event节点的左侧输入引脚Event，移到节点右侧，变成一个输出执行流引脚Completed；并且在执行Completed引脚后的函数时，可以同时返回TimerHandle，那么就可以根据TimerHandle取得与之对应的Object，然后调用该Object的函数，完成同时处理N个对象的异步调用**。**在经过以上调整，新SetTimer节点的引脚应该是如下结构。<br>
+<img src="https://xusjtuer.github.io/post-images/1601118090704.jpg" alt="" loading="lazy"></p>
+<center style="font-size:10px;color:#C0C0C0;text-decoration:none">图2. SetTimer节点的引脚；</center> <br />
+<p>在同时处理N个对象的异步调用时，每个对象的异步过程执行时间和间隔都可以是独立的，使用以下蓝图节点处理N个对象异步过程。</p>
+<iframe src="https://blueprintue.com/render/7k0ivxq2" width="900" height="400" scrolling="no" allowfullscreen></iframe>
+<center style="font-size:10px;color:#C0C0C0;text-decoration:none">同时处理N个对象的异步调用简易方案；</center> <br />
+<h1 id="3-source-code">3. Source code</h1>
+<p>**[实现]**源代码如下所示，在去除注释和空行，余下不过70+行，其中特别需要注意的是GC过程。首先贴出源代码，随后解释代码中各个部分的作用。</p>
+<h2 id="h-文件">//.h 文件</h2>
+<pre><code class="language-c++">// Fill out your copyright notice in the Description page of Project Settings.
+
+#pragma once
+
+#include &quot;CoreMinimal.h&quot;
+#include &quot;Kismet/BlueprintAsyncActionBase.h&quot;
+#include &quot;Engine/EngineTypes.h&quot;
+#include &quot;Async_SetTimer.generated.h&quot;
+
+
+// Declare General Log Category, header file .h
+DECLARE_LOG_CATEGORY_EXTERN(LogAsyncAction, Log, All);
+
+
+/**
+ *
+ */
+UCLASS(meta = (HideThen = true))
+class ASYNCSYSTEM_API UAsync_SetTimer : public UBlueprintAsyncActionBase
+{
+	// Delcear delegate for finished delay
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTimerHandleDelegate, FTimerHandle, TimerHandle);
+	GENERATED_BODY()
+
+public:
+
+	UAsync_SetTimer();
+
+	~UAsync_SetTimer();
+
+public:
+
+	/**
+	 * Set a timer to execute Completed delegate. Setting an existing timer will reset that timer with updated parameters.
+	 * @param WorldContextObject		The world context.
+	 * @param Time						How long to wait before executing the delegate, in seconds. Setting a timer to &lt;= 0 seconds will clear it if it is set.
+	 * @param bLooping					True to keep executing the delegate every Time seconds, false to execute delegate only once.
+	 * @param InitialStartDelay			Initial delay passed to the timer manager, in seconds.
+	 * @param InitialStartDelayVariance	Use this to add some variance to when the timer starts in lieu of doing a random range on the InitialStartDelay input, in seconds.
+	 * @return							The timer handle to pass to other timer functions to manipulate this timer.
+	 */
+	UFUNCTION(BlueprintCallable, meta = (BlueprintInternalUseOnly = &quot;true&quot;, WorldContext = &quot;WorldContextObject&quot;, DisplayName = &quot;Set Timer&quot;, ScriptName = &quot;SetTimerDelegate&quot;, AdvancedDisplay = &quot;InitialStartDelay, InitialStartDelayVariance&quot;), Category = &quot;Utilities|Time&quot;)
+		static UAsync_SetTimer* SetTimer(const UObject* WorldContextObject, float Time, bool bLooping, float InitialStartDelay = 0.f, float InitialStartDelayVariance = 0.f);
+
+public: // Generate exec out pin
+
+	/** Generate Exec Outpin, named Then */
+	UPROPERTY(BlueprintAssignable)
+		FTimerHandleDelegate Then;
+
+	/** Generate Exec Outpin, named Completed */
+	UPROPERTY(BlueprintAssignable)
+		FTimerHandleDelegate Completed;
+
+private: // UBlueprintAsyncActionBase interface
+
+	virtual void Activate() override;
+	//~ END UBlueprintAsyncActionBase interface
+
+	/** UFunction for Delegate.BindUFunction; */
+	UFUNCTION()
+		void CompletedEvent();
+
+	/** Based on UKismetSystemLibrary::K2_SetTimerDelegate() */
+	FTimerHandle SetTimerDelegate(FTimerDynamicDelegate Delegate, float Time, bool bLooping, float InitialStartDelay = 0.f, float InitialStartDelayVariance = 0.f);
+
+	/** Action for garbage class instance */
+	void PreGarbageCollect();
+
+private:
+	const UObject* WorldContextObject;
+	FTimerHandle TimerHandle;
+
+	UWorld*  World;
+};
+
+</code></pre>
+<h2 id="cpp-文件">//.cpp 文件</h2>
+<pre><code class="language-c++">// Fill out your copyright notice in the Description page of Project Settings.
+
+
+#include &quot;Async_SetTimer.h&quot;
+#include &quot;Kismet/KismetSystemLibrary.h&quot;
+
+
+//Declare General Log Category, source file .cpp
+DEFINE_LOG_CATEGORY(LogAsyncAction);
+
+
+
+
+UAsync_SetTimer::UAsync_SetTimer()
+{
+	WorldContextObject = nullptr;
+
+	//if (HasAnyFlags(RF_ClassDefaultObject) == false)
+	//{
+	//	AddToRoot();
+	//}
+	// Helper message to track object instance
+	UE_LOG(LogAsyncAction, Log, TEXT(&quot;UAsync_SetTimer::UAsync_SetTimer(): Async_SetTimer object [%s] is being created.&quot;), *this-&gt;GetName());
+}
+
+
+UAsync_SetTimer::~UAsync_SetTimer()
+{
+	// Helper message to track object instance
+	UE_LOG(LogAsyncAction, Log, TEXT(&quot;UAsync_SetTimer::~UAsync_SetTimer(): Async_SetTimer object is being deleted.&quot;));
+}
+
+
+UAsync_SetTimer* UAsync_SetTimer::SetTimer(const UObject* WorldContextObject, float Time, bool bLooping, float InitialStartDelay /*= 0.f*/, float InitialStartDelayVariance /*= 0.f*/)
+{
+	if (!WorldContextObject)
+	{
+		FFrame::KismetExecutionMessage(TEXT(&quot;Invalid WorldContextObject. Cannot execute Set Timer.&quot;), ELogVerbosity::Error);
+		return nullptr;
+	}
+	/** Based on UKismetSystemLibrary::K2_SetTimer() */
+	InitialStartDelay += FMath::RandRange(-InitialStartDelayVariance, InitialStartDelayVariance);
+	if (Time &lt;= 0.f || ((Time + InitialStartDelay) - InitialStartDelayVariance) &lt; 0.f)
+	{
+		FFrame::KismetExecutionMessage(TEXT(&quot;SetTimer passed a negative or zero time.  The associated timer may fail to fire!  If using InitialStartDelayVariance, be sure it is smaller than (Time + InitialStartDelay).&quot;), ELogVerbosity::Warning);
+		return nullptr;
+	}
+
+	UAsync_SetTimer* AsyncNode = NewObject&lt;UAsync_SetTimer&gt;();
+	AsyncNode-&gt;WorldContextObject = WorldContextObject;
+
+	FTimerDynamicDelegate Delegate;
+	Delegate.BindUFunction(AsyncNode, FName(&quot;CompletedEvent&quot;));
+	AsyncNode-&gt;TimerHandle = AsyncNode-&gt;SetTimerDelegate(Delegate, Time, bLooping, InitialStartDelay, InitialStartDelayVariance);
+
+	//  Call to globally register this object with a game instance, it will not be destroyed until SetReadyToDestroy is called
+	AsyncNode-&gt;RegisterWithGameInstance((UObject*)WorldContextObject);
+
+	FCoreUObjectDelegates::GetPreGarbageCollectDelegate().AddUObject(AsyncNode, &amp;UAsync_SetTimer::PreGarbageCollect);
+
+	return AsyncNode;
+}
+
+
+/** Based on UKismetSystemLibrary::K2_SetTimerDelegate() */
+FTimerHandle UAsync_SetTimer::SetTimerDelegate(FTimerDynamicDelegate Delegate, float Time, bool bLooping, float InitialStartDelay /*= 0.f*/, float InitialStartDelayVariance /*= 0.f*/)
+{
+	FTimerHandle Handle;
+	if (Delegate.IsBound())
+	{
+		World = GEngine-&gt;GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::ReturnNull);
+		if (World)
+		{
+			InitialStartDelay += FMath::RandRange(-InitialStartDelayVariance, InitialStartDelayVariance);
+			if (Time &lt;= 0.f || ((Time + InitialStartDelay) - InitialStartDelayVariance) &lt; 0.f)
+			{
+				FFrame::KismetExecutionMessage(TEXT(&quot;SetTimer passed a negative or zero time.  The associated timer may fail to fire!  If using InitialStartDelayVariance, be sure it is smaller than (Time + InitialStartDelay).&quot;), ELogVerbosity::Warning);
+			}
+
+			FTimerManager&amp; TimerManager = World-&gt;GetTimerManager();
+			Handle = TimerManager.K2_FindDynamicTimerHandle(Delegate);
+			TimerManager.SetTimer(Handle, Delegate, Time, bLooping, (Time + InitialStartDelay));
+		}
+	}
+	else
+	{
+		UE_LOG(LogBlueprintUserMessages, Warning,
+			TEXT(&quot;SetTimer passed a bad function (%s) or object (%s)&quot;),
+			*Delegate.GetFunctionName().ToString(), *GetNameSafe(Delegate.GetUObject()));
+	}
+
+	return Handle;
+}
+
+
+void UAsync_SetTimer::PreGarbageCollect()
+{
+	if (World)
+	{
+		FTimerManager&amp; TimerManager = World-&gt;GetTimerManager();
+		if (!TimerManager.TimerExists(TimerHandle))
+		{
+			SetReadyToDestroy();
+		}
+	}
+}
+
+void UAsync_SetTimer::Activate()
+{
+	if (!WorldContextObject)
+	{
+		FFrame::KismetExecutionMessage(TEXT(&quot;Invalid WorldContextObject. Cannot execute Set Timer.&quot;), ELogVerbosity::Error);
+		return;
+	}
+
+	// call Then delegate binding event
+	Then.Broadcast(TimerHandle);
+}
+
+
+void UAsync_SetTimer::CompletedEvent()
+{
+	Completed.Broadcast(TimerHandle);
+}
+
+</code></pre>
+<ul>
+<li>声明Delegate：声明了包含一个参数的委托Delegate，参数类型为FTimerHandle，名称TimerHandle。Delegate的参数将会出现在异步蓝图节点上。若仍不了解委托的声明方法，见官方文档：<a href="https://link.zhihu.com/?target=https%3A//docs.unrealengine.com/zh-CN/Programming/UnrealArchitecture/Delegates/index.html">委托 在C++对象上引用和执行成员函数的数据类型。</a></li>
+</ul>
+<pre><code class="language-c++">// Delcear delegate 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTimerHandleDelegate, FTimerHandle, TimerHandle);
+</code></pre>
+<ul>
+<li>构造和析构函数：二个输出Log用于观察该对象是创建和销毁的时刻。</li>
+</ul>
+<pre><code class="language-c++">UAsync_SetTimer::UAsync_SetTimer()
+{
+	WorldContextObject = nullptr;
+	//if (HasAnyFlags(RF_ClassDefaultObject) == false)
+	//{
+	//	AddToRoot();
+	//}
+	// Helper message to track object instance
+	UE_LOG(LogAsyncAction, Log, TEXT(&quot;UAsync_SetTimer::UAsync_SetTimer(): Async_SetTimer object [%s] is being created.&quot;), *this-&gt;GetName());
+}
+
+UAsync_SetTimer::~UAsync_SetTimer()
+{
+	// Helper message to track object instance
+	UE_LOG(LogAsyncAction, Log, TEXT(&quot;UAsync_SetTimer::~UAsync_SetTimer(): Async_SetTimer object is being deleted.&quot;));
+}
+</code></pre>
+<ul>
+<li>声明Exec Pin**：**这一部分声明委托变量的个数将会决定此后异步蓝图节点执行流引脚的个数，以下声明将增加2个执行流。由于默认的执行流then输出引脚执行时并不能返回参数，在本例中几乎无任何作用，故使用UCLASS(meta =(HideThen =true))宏隐藏了默认的then执行流。如下图所示，若不使用该说明符将存在3个输出执行流引脚。</li>
+</ul>
+<pre><code class="language-c++">public: // Generate exec out pin
+
+	/** Generate Exec Outpin, named Then */
+	UPROPERTY(BlueprintAssignable)
+		FTimerHandleDelegate Then;
+
+	/** Generate Exec Outpin, named Completed */
+	UPROPERTY(BlueprintAssignable)
+		FTimerHandleDelegate Completed;
+</code></pre>
+<figure data-type="image" tabindex="1"><img src="https://xusjtuer.github.io/post-images/1601118826286.gif" alt="" loading="lazy"></figure>
+<center style="font-size:10px;color:#C0C0C0;text-decoration:none">图3. 注意观察三个输出执行流引脚的提示tooltip；</center> <br />
+<ul>
+<li>声明异步节点**：**此处声明了该蓝图节点，BlueprintInternalUseOnly =&quot;true&quot;，隐藏自动生成的非异步蓝图节点，没有这个说明符将蓝图中看到二个同名节点。此函数的返回值必须是该派生类类型的指针，该返回值参数不会出现在蓝图节中，函数体主要用于输入参数检验、创建派生类对象以及赋值。</li>
+</ul>
+<pre><code class="language-c++">UFUNCTION(BlueprintCallable, meta = (BlueprintInternalUseOnly = &quot;true&quot;, WorldContext = &quot;WorldContextObject&quot;, DisplayName = &quot;Set Timer&quot;, ScriptName = &quot;SetTimerDelegate&quot;, AdvancedDisplay = &quot;InitialStartDelay, InitialStartDelayVariance&quot;), Category = &quot;Utilities|Time&quot;)
+	static UAsync_SetTimer* SetTimer(const UObject* WorldContextObject, float Time, bool 
+</code></pre>
+<figure data-type="image" tabindex="2"><img src="https://xusjtuer.github.io/post-images/1601118968257.gif" alt="" loading="lazy"></figure>
+<center style="font-size:10px;color:#C0C0C0;text-decoration:none">图4. 声明函数时，不使用BlueprintInternalUseOnly ="true";说明符；</center> <br />
+<ul>
+<li>Activate()函数：基类UBlueprintAsyncActionBase的接口，在函数体内部触发委托绑定的事件。</li>
+</ul>
+<pre><code class="language-c++">void UAsync_SetTimer::Activate()
+{
+	if (!WorldContextObject)
+	{
+		FFrame::KismetExecutionMessage(TEXT(&quot;Invalid WorldContextObject. Cannot execute Set Timer.&quot;), ELogVerbosity::Error);
+		return;
+	}
+
+	// call Then delegate binding event
+	Then.Broadcast(TimerHandle);
+}
+</code></pre>
+<p><strong>GC管理</strong>（特别重要**）**：UBlueprintAsyncActionBase是UObject派生类，若不进行对象管理，则会自动被回收；</p>
+<p>生成后，调用RegisterWithGameInstance()，防止自动回收</p>
+<pre><code class="language-c++">//  Call to globally register this object with a game instance, it will not be destroyed until SetReadyToDestroy is called
+AsyncNode-&gt;RegisterWithGameInstance((UObject*)WorldContextObject);
+</code></pre>
+<p>结束时，调用<strong>Clear and Invalidate Timer by Handle</strong>节点后，该实例对象的TimerHandle被重置。<code>UAsync_SetTimer::PreGarbageCollect()</code>在系统每次进行GC前时被触发，检查UAsync_SetTimer实例的TimerHandle是否有效；如无效，则调用<code>SetReadyToDestroy()</code>，并在GC时，回收该实例对象。</p>
+<pre><code class="language-c++">void UAsync_SetTimer::PreGarbageCollect()
+{
+	if (World)
+	{
+		FTimerManager&amp; TimerManager = World-&gt;GetTimerManager();
+		if (!TimerManager.TimerExists(TimerHandle))
+		{
+			SetReadyToDestroy();
+		}
+	}
+}
+</code></pre>
+<h1 id="4-usage">4. Usage</h1>
+<p>上述代码编译成功后，可在蓝图图表中找到SetTimer节点，下面列举异步节点SetTimer的3种功能：<strong>[应用]</strong></p>
+<p>(1) 用作计时器，和内置的SetTimerByEvent相比，无需新定义一个函数；下面蓝图示例可用于计算二次调用间隔的时间。</p>
+<iframe src="https://blueprintue.com/render/lqziar74" width="900" height="320" scrolling="no" allowfullscreen></iframe>
+<center style="font-size:10px;color:#C0C0C0;text-decoration:none">SetTimer用作计时器；</center> <br />
+<p>(2) 等效于一个非阻塞、可随时取消的Delay节点；Then引脚可以继续执行主逻辑，TimerHandle用来控制Completed引脚后连接函数的暂停、取消暂停、清空等操作。</p>
+<iframe src="https://blueprintue.com/render/s-sbvqpk" width="900" height="320" scrolling="no" allowfullscreen></iframe>
+<center style="font-size:10px;color:#C0C0C0;text-decoration:none">SetTimer用作可取消的Delay；</center> <br />
+<p>(3) 同时处理N个对象的异步调用；简单测试执行异步节点SetTimer消耗，下面蓝图代码随机生成100个StaticMeshActor，以不同的时间间隔让Actor自转，观察fps(Cmd: Stat UnitGraph, Game Frame曲线(Cmd: Stat UnitGraph)等参数几乎没明显变化，表明该节点耗损很小 。(提示：先要关闭测试StaticMeshActor的模拟物理，碰撞，Shadow等与SetTimer测试无关的属性)</p>
+<iframe src="https://blueprintue.com/render/iaq6q8cl" width="900" height="320" scrolling="no" allowfullscreen></iframe>
+<center style="font-size:10px;color:#C0C0C0;text-decoration:none">SetTimer 同时处理N个对象的异步调用；</center> <br />
+<h1 id="5-conclusion">5. Conclusion</h1>
+<p>本文以实现异步节点SetTimer为例，着重介绍使用UBlueprintAsyncActionBase派生类实现异步蓝图节点的全流程，其中特别需要注意的GC过程。扩展：(1)该SetTimer节点还可以进一步扩展，限制Completed引脚执行的次数；(2)UBlueprintAsyncActionBase派生类，如果同时继承FTickableGameObject就可以使输出执行流Tickable。</p>
+
+                </div>
+            </article>
+        </div>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="https://xusjtuer.github.io/post/ue4-post7_rewrite_source_code_and_examples/" class="post-title gt-a-link">
+                    UE4 源代码改写过程和应用实例
+                </a>
+            </div>
+        
+
+        
+
+        
+
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first">海阔凭鱼跃，天高任鸟飞</div>
+    <div class="social-container">
+        
+            
+                <a href="https://github.com/xusjtuer" target="_blank">
+                    <i class="fab fa-github gt-c-content-color-first"></i>
+                </a>
+            
+        
+            
+        
+            
+        
+            
+                <a href="https://www.zhihu.com/people/tong-nian-de-qin" target="_blank">
+                    <i class="fab fa-zhihu gt-c-content-color-first"></i>
+                </a>
+            
+        
+            
+        
+            
+        
+    </div>
+    <div class="footer-info">
+        Powered by <a href="https://github.com/xusjtuer" target="_blank">xusjtuer</a>
+    </div>
+    <div>
+        Theme by <a href="https://imhanjie.com/" target="_blank">imhanjie</a>, Powered by <a
+                href="https://github.com/getgridea/gridea" target="_blank">Gridea | <a href="https://xusjtuer.github.io/atom.xml" target="_blank">RSS</a></a>
+    </div>
+</div>
+
+<script>
+  hljs.initHighlightingOnLoad()
+</script>
+
+    </div>
+</div>
+</body>
+</html>
