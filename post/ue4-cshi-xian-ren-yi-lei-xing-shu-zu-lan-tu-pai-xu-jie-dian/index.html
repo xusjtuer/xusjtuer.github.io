@@ -78,7 +78,7 @@
       <div class="hide-on-mobile hide-on-tablet hide-on-desktop">
         <div id="search-lightbox" class="grid-container grid-small grid-parent mfp-hide">
           <div class="search-wrapper section">
-            <form id="gridea-search-form" data-update="1601093298733" action="/search/index.html" class="search-form" _lpchecked="1">
+            <form id="gridea-search-form" data-update="1601093424945" action="/search/index.html" class="search-form" _lpchecked="1">
               <input type="text" name="q" id="s" value="" class="search-field" placeholder="搜点啥..." aria-label="搜点啥..." required="">
               <button type="submit" class="submit" aria-label="Submit">
                 <i class="fa fa-search-line"></i>
@@ -126,8 +126,8 @@
                   <h2 id="1-overview">1. Overview</h2>
 <p>本教程旨在讲解在虚幻引擎(UE4) C++中实现蓝图(Blueprint)可调用的任意类型数组排序的蓝图节点。纯蓝图方法实现任意类型数组排序方法，请查看上一期 <a href="https://xusjtuer.github.io/post/ue4-dong-tai-du-xie-datatable-shu-ju-biao/">UE4 蓝图实现任意类型数组排序</a>。以下泛型数组排序节点Array_Sort基于快速排序算法（Quick Sort）原理，冒泡排序（Bubble Sort）版见知乎链接：<a href="https://zhuanlan.zhihu.com/p/144880580">第2期 UE4 C++实现任意类型数组蓝图排序节点</a>。编者水平有限，如有错漏敬请谅解。</p>
 <h2 id="2-introduction">2.  Introduction</h2>
-<p>快速排序（Quick Sort）的平均时间复杂度为O(nlog<sub>2</sub>n)，冒泡排序（Bubble Sort）的平均时间复杂度为O(n<sup>2</sup>)，若以时间复杂度作为评价二种排序算法的优劣标准的话，快速排序明显优于冒泡排序。所以在已经介绍了冒泡版泛型数组排序方法，再次补充一个快速排序版泛型数组排序方法。同样地，以Sort by Function和Sort by Property作为比较数组成员大小的二种方式，分别编写了Sort Array by Function和Sort Array by Proerty二个泛型数组排序节点。</p>
-<p>本文主要讲解UE4 C++泛型数组的快速排序蓝图节点的实现方法，以及该泛型快排节点与STL 排序方法的比较。</p>
+<p>快速排序（Quick Sort）的平均时间复杂度为O(nlog<sub>2</sub>n)，冒泡排序（Bubble Sort）的平均时间复杂度为O(n<sup>2</sup>)，若以时间复杂度作为评价二种排序算法的优劣标准的话，快速排序明显优于冒泡排序。所以在已经介绍了冒泡版泛型数组排序方法，再次补充一个快速排序版泛型数组排序方法。同样地，以Sort by Function和Sort by Property作为比较数组成员大小的二种方式，分别编写了Sort Array by Function和Sort Array by Proerty二个泛型数组排序节点。<br>
+本文主要讲解UE4 C++泛型数组的快速排序蓝图节点的实现方法，以及该泛型快排节点与STL 排序方法的比较。</p>
 <h2 id="3-sort-approach">3. Sort Approach</h2>
 <h3 id="31-基于sortby-function实现泛型数组排序">3.1 基于SortBy Function，实现泛型数组排序</h3>
 <h4 id="1-h文件array_sort函数声明">(1) h文件，Array_Sort函数声明：</h4>
@@ -490,7 +490,7 @@
 <h2 id="4-usage">4. Usage</h2>
 <p>上述代码编译成功后，可在蓝图图表中找到以上二个SORT节点。<br>
 <img src="https://xusjtuer.github.io/post-images/1601088861073.gif" alt="" loading="lazy"></p>
-<p>下面以float 数组为例，进行简单测试，以对比Sort by Propery和Sort by Function和Sort（STL）三种方式排序时间的差异</p>
+<p>下面以float 数组为例，进行简单测试，以对比Sort by Propery和Sort by Function和Sort（STL）三种方式排序时间的差异;</p>
 <p>随机获取一个浮点型数组，分别调用SORT节点，并打印排序时间</p>
 <iframe src="https://blueprintue.com/render/3_3td0x0" width="900" height="640" scrolling="no" allowfullscreen></iframe>
 <p>Print Duration宏蓝图代码如下</p>
