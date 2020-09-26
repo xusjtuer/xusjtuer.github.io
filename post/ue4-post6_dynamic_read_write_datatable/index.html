@@ -6,7 +6,7 @@
 
 <title>UE4 动态读写DataTable数据表 | 童年的琴-博客</title>
 
-<link rel="shortcut icon" href="https://xusjtuer.github.io/favicon.ico?v=1601113334658">
+<link rel="shortcut icon" href="https://xusjtuer.github.io/favicon.ico?v=1601114154894">
 
 <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://xusjtuer.github.io/styles/main.css">
@@ -77,7 +77,7 @@
             
         </div>
         <div style="text-align: center">
-            <form id="gridea-search-form" style="position: relative" data-update="1601113334658" action="/search/index.html">
+            <form id="gridea-search-form" style="position: relative" data-update="1601114154894" action="/search/index.html">
                 <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
                 <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
             </form>
@@ -420,13 +420,10 @@ void UGenericMiscLibrary::GetDataTableAsCSVFile(UDataTable* DataTable, const FSt
 <p>蓝图中使用示例，以CSV文件读写DataTable为例，(注意：CSV文件/Json文件需和从引擎中DataTable导出的CSV/Json文件，在文件内容采用相同格式)<br>
 <img src="https://xusjtuer.github.io/post-images/1601112945942.jpg" alt="" loading="lazy"></p>
 <center style="font-size:10px;color:#C0C0C0;text-decoration:none">图3. 使Fill Data Table From CSV File和Get Table As CSV File节点使用示例；</center> <br />
-<p>打包之后运行结果：</p>
-<figure class="video_container">
-  <iframe src="https://www.youtube.com/embed/enMumwvLAug" frameborder="0" allowfullscreen="true"> </iframe>
-</figure>
 <h1 id="6-conclusion">6. Conclusion</h1>
 <p>本文主要介绍了ue4中动态读写DataTable表方法，实现了CSV/JSON格式数据直接写入DataTable中功能，同时也支持将DataTable数据表导出成CSV数据，完全可以满足对DataTable数据表的动态读写操作。不足之处：将DataTable导出成可读性更高的JSON文件 (Get Table As Json File) 没有完成。</p>
-<p>以上内容其实属于对整个DataTable的操作，还有对DataTable的行（Row），属性(Property)进行操作的方法，如下图，还有一些待完善，以后再分享。</p>
+<p>以上内容其实属于对整个DataTable的操作，还有对DataTable的行（Row），属性(Property)进行操作的方法，如下。</p>
+<iframe src="http://blueprintue.cn/render/0jw27bo3" width="900" height="640"  scrolling="no" allowfullscreen></iframe>
 
                 </div>
             </article>
