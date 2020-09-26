@@ -6,7 +6,7 @@
 
 <title>UE4 动态读写DataTable数据表 | 童年的琴-博客</title>
 
-<link rel="shortcut icon" href="https://xusjtuer.github.io/favicon.ico?v=1601111910194">
+<link rel="shortcut icon" href="https://xusjtuer.github.io/favicon.ico?v=1601113334658">
 
 <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://xusjtuer.github.io/styles/main.css">
@@ -77,7 +77,7 @@
             
         </div>
         <div style="text-align: center">
-            <form id="gridea-search-form" style="position: relative" data-update="1601111910194" action="/search/index.html">
+            <form id="gridea-search-form" style="position: relative" data-update="1601113334658" action="/search/index.html">
                 <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
                 <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
             </form>
@@ -96,9 +96,337 @@
                         · 2020-09-14 ·
                     </time>
                     
+                        <a href="https://xusjtuer.github.io/tag/MksDbrf4G/" class="post-tags">
+                            # datatable
+                        </a>
+                    
+                        <a href="https://xusjtuer.github.io/tag/-2SzmVEH6v/" class="post-tags">
+                            # json
+                        </a>
+                    
+                        <a href="https://xusjtuer.github.io/tag/MNPa125Vs4/" class="post-tags">
+                            # csv
+                        </a>
+                    
+                        <a href="https://xusjtuer.github.io/tag/chYkJdpez/" class="post-tags">
+                            # ue4 c++
+                        </a>
+                    
                 </div>
                 <div class="post-content">
-                    <p>1</p>
+                    <h1 id="1-overview">1. Overview</h1>
+<p>DataTable数据表在UE4中是一类重要的资产(Asset)，截至ue4 v4.25版本，引擎内置的函数并不支持运行时(Runtime)修改DataTable表，所以写下本教程，讲解如何在ue4中实现动态修改DataTable数据表。如下图所示函数，由于其功能和ue4内置的DataTable编辑脚本(EditorScript)相同，所以仿照源码取了相同的函数名称，但以下蓝图节点在打包之后仍然可以调用。<br>
+<img src="https://xusjtuer.github.io/post-images/1601112523810.jpg" alt="" loading="lazy"></p>
+<center style="font-size:10px;color:#C0C0C0;text-decoration:none">图1. 动态读写DataTable的自定义蓝图节点；</center> <br />
+<h1 id="2-introduction">2. Introduction</h1>
+<p>DataTable数据表在ue4开发中应用广泛，特别是，在进行数据驱动开发时具有举足轻重的地位；但是ue4引擎暴露出来函数中，能够对DataTable表进行编辑的函数却特别少，其中还有一些函数被WITH_EDITOR宏包裹着，属于编辑器脚本 (Editor Script)，无法在项目打包之后调用。要想对DataTable进行更多样的操作，只有自己创建c++函数来实现动态读写DataTable功能。</p>
+<pre><code class="language-c++">#if WITH_EDITOR
+	/** 
+	 * Empty and fill a Data Table from CSV string.
+	 * @param	CSVString	The Data that representing the contents of a CSV file.
+	 * @return	True if the operation succeeds, check the log for errors if it didn't succeed.
+	 */
+	UFUNCTION(BlueprintCallable, Category = &quot;Editor Scripting | DataTable&quot;, DisplayName=&quot;Fill Data Table from CSV String&quot;)
+	static bool FillDataTableFromCSVString(UDataTable* DataTable, const FString&amp; CSVString);
+
+	/** 
+	 * Empty and fill a Data Table from CSV file.
+	 * @param	CSVFilePath	The file path of the CSV file.
+	 * @return	True if the operation succeeds, check the log for errors if it didn't succeed.
+	 */
+	UFUNCTION(BlueprintCallable, Category = &quot;Editor Scripting | DataTable&quot;, DisplayName = &quot;Fill Data Table from CSV File&quot;)
+	static bool FillDataTableFromCSVFile(UDataTable* DataTable, const FString&amp; CSVFilePath);
+
+	/** 
+	 * Empty and fill a Data Table from JSON string.
+	 * @param	JSONString	The Data that representing the contents of a JSON file.
+	 * @return	True if the operation succeeds, check the log for errors if it didn't succeed.
+	 */
+	UFUNCTION(BlueprintCallable, Category = &quot;Editor Scripting | DataTable&quot;, DisplayName = &quot;Fill Data Table from JSON String&quot;)
+	static bool FillDataTableFromJSONString(UDataTable* DataTable, const FString&amp; JSONString);
+
+
+	/** 
+	 * Empty and fill a Data Table from JSON file.
+	 * @param	JSONFilePath	The file path of the JSON file.
+	 * @return	True if the operation succeeds, check the log for errors if it didn't succeed.
+	 */
+	UFUNCTION(BlueprintCallable, Category = &quot;Editor Scripting | DataTable&quot;, DisplayName = &quot;Fill Data Table from JSON File&quot;)
+	static bool FillDataTableFromJSONFile(UDataTable* DataTable, const FString&amp; JSONFilePath);
+#endif //WITH_EDITOR
+</code></pre>
+<center style="font-size:10px;color:#C0C0C0;text-decoration:none"> DataTableFunctionLibrary类的Editor Script写入DataTable；</center> <br />
+<h1 id="3-why"><strong>3. Why</strong></h1>
+<p>首先想要简要叙述以下二个问题：</p>
+<p><strong>(1) 为什么需要动态读写DataTable？</strong></p>
+<p>最大的好处是便于修改，打包之后可修改DataTable数据表中的数据，无需重复打包。目前引擎默认的功能中DataTable只允许在编辑器中编辑，或者在编辑时导入相同格式的CSV文件/JSON文件，这些功能在项目打包之后都是无法使用的；所以一般情况下，在修改DataTable中的数据之后，只能重新打包项目，费时费力。要想避免此类重复打包，实现动态读写DataTable就意义非凡了。</p>
+<p><strong>(2) 实现动态读写DataTable的原理?</strong></p>
+<p><strong>DataTable写操作过程：</strong></p>
+<p>从ue4 源码DataTable.h和DataTableFunctionLibrary.h二个类中不难发现，DataTable支持动态读写操作的，其中UDataTable::CreateTableFromCSVString()和UDataTable :: CreateTableFromJSONString()二个函数尤其值得注意，这二个函数并未被WITH_EDITOR宏包裹，也就是在非编辑器模式下，仍可被调用。而二种函数中的输入参数CSVSting和JSONString既可以通过本地磁盘文件获得，也可以使用HTTP网络传输的数据来获得。所以在获得CSVString/JSONString之后，调用这二个函数，即可实现向DataTable中写入数据。</p>
+<pre><code class="language-cpp">	/** 
+	 *	Create table from CSV style comma-separated string. 
+	 *	RowStruct must be defined before calling this function. 
+	 *	@return	Set of problems encountered while processing input
+	 */
+	ENGINE_API TArray&lt;FString&gt; CreateTableFromCSVString(const FString&amp; InString);
+
+	/** 
+	*	Create table from JSON style string. 
+	*	RowStruct must be defined before calling this function. 
+	*	@return	Set of problems encountered while processing input
+	*/
+	ENGINE_API TArray&lt;FString&gt; CreateTableFromJSONString(const FString&amp; InString);
+
+</code></pre>
+<center style="font-size:10px;color:#C0C0C0;text-decoration:none"> 源码DataTable.h中的函数；</center> <br />
+<p><strong>DataTable读操作过程：</strong></p>
+<p>从DataTable的Editor Script不难看出DataTable可以逆序列化为CSV文件和JSON文件，以下GetTableAsCSVFile方法将DataTable每个数据转换成String类型，按照CSV文件格式保存成CSV文件。</p>
+<h1 id="4-approach">4. Approach</h1>
+<p>自定义动态读写DataTable的蓝图节点，实现过程大致如下：</p>
+<p>（1） 以UBlueprintFunctionLibrary为基类，创建C++类，该类的.h文件，主要代码如下：</p>
+<p>包含的头文件：</p>
+<pre><code class="language-c++">#pragma once
+
+#include &quot;CoreMinimal.h&quot;
+#include &quot;Kismet/BlueprintFunctionLibrary.h&quot;
+#include &quot;Engine/DataTable.h&quot;
+#include &quot;GenericArrayLibrary.generated.h&quot;
+</code></pre>
+<p>自定义了一个LogCategory，用于分类LOG</p>
+<pre><code class="language-c++">// Declare General Log Category, header file .h
+DECLARE_LOG_CATEGORY_EXTERN(LogUtiliesNode, Log, All);
+</code></pre>
+<p>函数声明</p>
+<pre><code class="language-c++">/**
+	* Empty and fill a Data Table from CSV string.
+	* @param	CSVString	The Data that representing the contents of a CSV file.
+	* @return	True if the operation succeeds, check the log for errors if it didn't succeed.
+	*/
+UFUNCTION(BlueprintCallable, DisplayName = &quot;Fill Data Table from CSV String&quot;, Category = &quot;DataTable&quot;)
+	static bool FillDataTableFromCSVString(UDataTable* DataTable, const FString&amp; CSVString);
+
+/**
+	* Empty and fill a Data Table from CSV file.
+	* @param	CSVFilePath	The file path of the CSV file.
+	* @return	True if the operation succeeds, check the log for errors if it didn't succeed.
+	*/
+UFUNCTION(BlueprintCallable, DisplayName = &quot;Fill Data Table from CSV File&quot;, Category = &quot;DataTable&quot;)
+	static bool FillDataTableFromCSVFile(UDataTable* DataTable, const FString&amp; CSVFilePath);
+
+/**
+	* Empty and fill a Data Table from JSON string.
+	* @param	JSONString	The Data that representing the contents of a JSON file.
+	* @return	True if the operation succeeds, check the log for errors if it didn't succeed.
+	*/
+UFUNCTION(BlueprintCallable, DisplayName = &quot;Fill Data Table from JSON String&quot;, Category = &quot;DataTable&quot;)
+	static bool FillDataTableFromJSONString(UDataTable* DataTable, const FString&amp; JSONString);
+
+/**
+	* Empty and fill a Data Table from JSON file.
+	* @param	JSONFilePath	The file path of the JSON file.
+	* @return	True if the operation succeeds, check the log for errors if it didn't succeed.
+	*/
+UFUNCTION(BlueprintCallable, DisplayName = &quot;Fill Data Table from JSON File&quot;, Category = &quot;DataTable&quot;)
+	static bool FillDataTableFromJSONFile(UDataTable* DataTable, const FString&amp; JSONFilePath);
+
+/** Output entire contents of table as CSV string */
+UFUNCTION(BlueprintCallable, DisplayName = &quot;Get Table As CSV String&quot;, Category = &quot;DataTable&quot;)
+	static void GetDataTableAsCSVString(UDataTable* DataTable, FString&amp; CSVString);
+
+/** Output entire contents of table as CSV File */
+UFUNCTION(BlueprintCallable, DisplayName = &quot;Get Table As CSV File&quot;, Category = &quot;DataTable&quot;)
+	static void GetDataTableAsCSVFile(UDataTable* DataTable, const FString&amp; CSVFilePath);
+</code></pre>
+<p>该类.cpp文件中，包含的头文件：</p>
+<pre><code class="language-c++">#include &quot;GenericArrayLibrary.h&quot;
+#include &quot;HAL/PlatformFilemanager.h&quot;
+#include &quot;Misc/FileHelper.h&quot;
+#include &quot;DataTableUtils.h&quot;
+</code></pre>
+<p>声明Log Category</p>
+<pre><code class="language-c++">//Declare General Log Category, source file .cpp
+DEFINE_LOG_CATEGORY(LogUtiliesNode);
+</code></pre>
+<p>函数实现：</p>
+<pre><code class="language-c++">bool UGenericMiscLibrary::FillDataTableFromCSVString(UDataTable* DataTable, const FString&amp; CSVString)
+{
+	if (!DataTable || (CSVString.Len() == 0))
+	{
+		UE_LOG(LogUtiliesNode, Warning, TEXT(&quot;FillDataTableFromCSVString -&gt; Can't fill DataTable with CSVString: %.&quot;), *CSVString);
+		return false;
+	}
+	// Call bulit-in function
+	TArray&lt;FString&gt; Errors = DataTable-&gt;CreateTableFromCSVString(CSVString);
+	if (Errors.Num())
+	{
+		// It has some error message
+		for (const FString&amp; Error : Errors)
+		{
+			UE_LOG(LogUtiliesNode, Warning, TEXT(&quot;%s&quot;), *Error);
+		}
+		return false;
+	}
+
+	return true;
+}
+
+bool UGenericMiscLibrary::FillDataTableFromCSVFile(UDataTable* DataTable, const FString&amp; CSVFilePath)
+{
+	FString CSVString;
+	if (FPlatformFileManager::Get().GetPlatformFile().FileExists(*CSVFilePath))
+	{
+		// Supports all combination of ANSI/Unicode files and platforms.
+		FFileHelper::LoadFileToString(CSVString, *CSVFilePath);
+	}
+	else
+	{
+		UE_LOG(LogUtiliesNode, Warning, TEXT(&quot;FillDataTableFromCSVFile -&gt; Cannot find CSV file %s&quot;), *CSVFilePath);
+		return false;
+	}
+	return UGenericMiscLibrary::FillDataTableFromCSVString(DataTable, CSVString);
+}
+
+bool UGenericMiscLibrary::FillDataTableFromJSONString(UDataTable* DataTable, const FString&amp; JSONString)
+{
+	if (!DataTable || (JSONString.Len() == 0))
+	{
+		UE_LOG(LogUtiliesNode, Warning, TEXT(&quot;FillDataTableFromJSONString -&gt; Can't fill DataTable with JSONString: %.&quot;), *JSONString);
+		return false;
+	}
+	// Call bulit-in function
+	TArray&lt;FString&gt; Errors = DataTable-&gt;CreateTableFromJSONString(JSONString);
+
+	if (Errors.Num())
+	{
+		// It has some error message
+		for (const FString&amp; Error : Errors)
+		{
+			UE_LOG(LogUtiliesNode, Warning, TEXT(&quot;%s&quot;), *Error);
+		}
+		return false;
+	}
+
+	return true;
+}
+
+bool UGenericMiscLibrary::FillDataTableFromJSONFile(UDataTable* DataTable, const FString&amp; JSONFilePath)
+{
+	FString JSONString;
+	if (FPlatformFileManager::Get().GetPlatformFile().FileExists(*JSONFilePath))
+	{
+		// Supports all combination of ANSI/Unicode files and platforms.
+		FFileHelper::LoadFileToString(JSONString, *JSONFilePath);
+	}
+	else
+	{
+		UE_LOG(LogUtiliesNode, Warning, TEXT(&quot;FillDataTableFromJSONFile -&gt; Cannot find CSV file %s&quot;), *JSONFilePath);
+		return false;
+	}
+	return UGenericMiscLibrary::FillDataTableFromJSONString(DataTable, JSONString);
+}
+
+void UGenericMiscLibrary::GetDataTableAsCSVString(UDataTable* DataTable, FString&amp; CSVString)
+{
+	CSVString = FString();
+
+	if (!DataTable || (DataTable-&gt;RowStruct == nullptr))
+	{
+		UE_LOG(LogTemp, Warning, TEXT(&quot;UGenericMiscLibrary::GetTableAsCSV : Missing DataTable or RowStruct !&quot;));
+		return;
+	}
+
+	// First build array of properties
+	TArray&lt;FProperty*&gt; StructProps;
+	for (TFieldIterator&lt;FProperty&gt; It(DataTable-&gt;RowStruct); It; ++It)
+	{
+		FProperty* Prop = *It;
+		check(Prop != nullptr);
+		StructProps.Add(Prop);
+	}
+
+	// First row, column titles, taken from properties
+	CSVString += TEXT(&quot;---&quot;);
+	for (int32 PropIdx = 0; PropIdx &lt; StructProps.Num(); PropIdx++)
+	{
+		CSVString += TEXT(&quot;,&quot;);
+		CSVString += StructProps[PropIdx]-&gt;GetName();
+	}
+	CSVString += TEXT(&quot;\n&quot;);
+
+	// Now iterate over rows
+	for (auto RowIt = DataTable-&gt;GetRowMap().CreateConstIterator(); RowIt; ++RowIt)
+	{
+		FName RowName = RowIt.Key();
+		CSVString += RowName.ToString();
+
+		uint8* RowData = RowIt.Value();
+		for (int32 PropIdx = 0; PropIdx &lt; StructProps.Num(); PropIdx++)
+		{
+			CSVString += TEXT(&quot;,&quot;);
+			CSVString += DataTableUtils::GetPropertyValueAsString(StructProps[PropIdx], RowData, EDataTableExportFlags::None);
+		}
+		CSVString += TEXT(&quot;\n&quot;);
+	}
+}
+
+
+
+void UGenericMiscLibrary::GetDataTableAsCSVFile(UDataTable* DataTable, const FString&amp; CSVFilePath)
+{
+	FString CSVString;
+	UGenericMiscLibrary::GetDataTableAsCSVString(DataTable, CSVString);
+	if (CSVString.Len() == 0)
+	{
+		return;
+	}
+	FFileHelper::SaveStringToFile(CSVString, *CSVFilePath, FFileHelper::EEncodingOptions::ForceUTF8);
+}
+</code></pre>
+<p>编译成功之后，即可获得以上6个节点。</p>
+<h1 id="5-usage">5. Usage</h1>
+<p>在c++类中自定义结构体，并且继承FTableRowBase类，以下示例使用的结构体如下：</p>
+<pre><code class="language-c++">  /** Comment */
+ USTRUCT(BlueprintType)
+ struct FYourCppStruct : public FTableRowBase
+ {
+  GENERATED_USTRUCT_BODY()
+  
+  UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = &quot;YourCppStruct&quot;)
+  int32 IntegerValue;
+  
+  UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = &quot;YourCppStruct&quot;)
+  float FloatValue;
+  
+  UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = &quot;YourCppStruct&quot;)
+  FString StingValue;
+  
+  UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = &quot;YourCppStruct&quot;)
+  FTransform TransformValue;
+  
+  UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = &quot;YourCppStruct&quot;)
+  TArray&lt;int32&gt; ArrayValue;
+  
+  UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = &quot;YourCppStruct&quot;)
+  TSet&lt;int32&gt; SetValue;
+  
+  UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = &quot;YourCppStruct&quot;)
+  TMap&lt;int32, FString&gt; MapValue;
+ };
+</code></pre>
+<p>**特别提醒：此结构体必须在c++中定义，**原因在于Cpp Struct和BP Struct在反射和继承等特征上并非是等价的，。</p>
+<p>编译结束之后，创建以该结构体为RowStruct的DataTable表<br>
+<img src="https://xusjtuer.github.io/post-images/1601112877940.gif" alt="" loading="lazy"></p>
+<center style="font-size:10px;color:#C0C0C0;text-decoration:none">图2. 使用在Cpp中定义的结构体，创建DataTable；</center> <br />
+<p>蓝图中使用示例，以CSV文件读写DataTable为例，(注意：CSV文件/Json文件需和从引擎中DataTable导出的CSV/Json文件，在文件内容采用相同格式)<br>
+<img src="https://xusjtuer.github.io/post-images/1601112945942.jpg" alt="" loading="lazy"></p>
+<center style="font-size:10px;color:#C0C0C0;text-decoration:none">图3. 使Fill Data Table From CSV File和Get Table As CSV File节点使用示例；</center> <br />
+<p>打包之后运行结果：</p>
+<figure class="video_container">
+  <iframe src="https://www.youtube.com/embed/enMumwvLAug" frameborder="0" allowfullscreen="true"> </iframe>
+</figure>
+<h1 id="6-conclusion">6. Conclusion</h1>
+<p>本文主要介绍了ue4中动态读写DataTable表方法，实现了CSV/JSON格式数据直接写入DataTable中功能，同时也支持将DataTable数据表导出成CSV数据，完全可以满足对DataTable数据表的动态读写操作。不足之处：将DataTable导出成可读性更高的JSON文件 (Get Table As Json File) 没有完成。</p>
+<p>以上内容其实属于对整个DataTable的操作，还有对DataTable的行（Row），属性(Property)进行操作的方法，如下图，还有一些待完善，以后再分享。</p>
 
                 </div>
             </article>
