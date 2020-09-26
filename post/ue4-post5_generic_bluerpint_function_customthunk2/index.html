@@ -1,0 +1,433 @@
+<html>
+<head>
+    <meta charset="utf-8"/>
+<meta name="description" content=""/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+<title>UE4 基于CustomThunk的泛型蓝图节点语法规范 (二) | 童年的琴-博客</title>
+
+<link rel="shortcut icon" href="https://xusjtuer.github.io/favicon.ico?v=1601111795686">
+
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://xusjtuer.github.io/styles/main.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css">
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dockerfile.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dart.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/moment@2.27.0/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"></script>
+<!-- DEMO JS -->
+<!--<script src="media/scripts/index.js"></script>-->
+
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <nav class="navbar navbar-expand-lg">
+    <div class="navbar-brand">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            童年的琴-博客
+        </div>
+    </div>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+                <div class="nav-item">
+                    
+                        <a href="/" class="menu gt-a-link">
+                            首页
+                        </a>
+                    
+                </div>
+            
+                <div class="nav-item">
+                    
+                        <a href="/archives" class="menu gt-a-link">
+                            归档
+                        </a>
+                    
+                </div>
+            
+                <div class="nav-item">
+                    
+                        <a href="/tags" class="menu gt-a-link">
+                            标签
+                        </a>
+                    
+                </div>
+            
+                <div class="nav-item">
+                    
+                        <a href="/post/about" class="menu gt-a-link">
+                            关于
+                        </a>
+                    
+                </div>
+            
+        </div>
+        <div style="text-align: center">
+            <form id="gridea-search-form" style="position: relative" data-update="1601111795686" action="/search/index.html">
+                <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+                <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    UE4 基于CustomThunk的泛型蓝图节点语法规范 (二)
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2020-09-14 ·
+                    </time>
+                    
+                        <a href="https://xusjtuer.github.io/tag/JBh2EGYhV/" class="post-tags">
+                            # customthunk
+                        </a>
+                    
+                        <a href="https://xusjtuer.github.io/tag/l7UgE4BWu/" class="post-tags">
+                            # wildcard
+                        </a>
+                    
+                        <a href="https://xusjtuer.github.io/tag/chYkJdpez/" class="post-tags">
+                            # ue4 c++
+                        </a>
+                    
+                        <a href="https://xusjtuer.github.io/tag/I8veTBffD8/" class="post-tags">
+                            # generic
+                        </a>
+                    
+                </div>
+                <div class="post-content">
+                    <h1 id="1-overview">1. Overview</h1>
+<p>上一期讲述了CustomThunk方式实现泛型蓝图节点中前二部分，泛型蓝图节点的声明以及自定义Thunk函数体的方法，本期将继续介绍第三部分：泛型函数（Generic）的实现。虽然不同泛型蓝图节点的功能千差万别，泛型函数代码也可能迥然不同，但是ue4编写中泛型函数与编写一般的c++函数完全相同。接下来将结合具体实例（如下图所示的3个泛型蓝图节点），让大家更全面的了解泛型蓝图节点的实现过程。特别提醒：在查看本期内容之前，请先了解上一期的内容。<br>
+<img src="https://xusjtuer.github.io/post-images/1601110979840.jpg" alt="" loading="lazy"></p>
+<center style="font-size:10px;color:#C0C0C0;text-decoration:none">图1. 泛型蓝图节点；</center> <br />
+<h1 id="2-approach">2. Approach</h1>
+<h2 id="21-struct-to-json-string节点">2.1 Struct to Json String节点</h2>
+<p><strong>功能</strong>：将任意类型结构体UStruct转换Json格式字符串<br>
+<img src="https://xusjtuer.github.io/post-images/1601111039655.jpg" alt="" loading="lazy"></p>
+<center style="font-size:10px;color:#C0C0C0;text-decoration:none">图2. UStruct to Json String 使用示例；</center> <br />
+<figure data-type="image" tabindex="1"><img src="https://xusjtuer.github.io/post-images/1601111092297.jpg" alt="" loading="lazy"></figure>
+<center style="font-size:10px;color:#C0C0C0;text-decoration:none">图3. UStruct to Json String 输出结果；</center> <br />
+<p>首先，在该模块的Build.cs文件中引入JsonUtilities,和Json模块，如下代码所示位置</p>
+<pre><code class="language-cpp">PrivateDependencyModuleNames.AddRange(
+	new string[]
+	{
+	&quot;CoreUObject&quot;,
+	&quot;Engine&quot;,
+	&quot;Slate&quot;,
+	&quot;SlateCore&quot;,
+	// ... add private dependencies that you statically link with here ...
+        &quot;JsonUtilities&quot;,
+        &quot;Json&quot;,
+	}
+);
+</code></pre>
+<p>由于UStruct to Json String的泛型函数，在源代码JsonObjectConverter.h中已经存在了，所以无需自己编写泛型函数，直接调用即可。</p>
+<p>代码实现如下：</p>
+<p>//h 文件，引入头文件 #include &quot;JsonObjectConverter.h&quot;</p>
+<pre><code class="language-cpp">/**
+	* Save any type of struct object to JSON format string, no struct type restriction
+	*
+	* @param	StructReference		The UStruct instance to read from
+	* @return	JSON String		Json Object string to be filled in with data from the ustruct
+*/
+UFUNCTION(BlueprintPure, CustomThunk, meta = (CustomStructureParam = &quot;StructReference&quot;, DisplayName = &quot;Struct to JSON String&quot;), Category = &quot;File|Json&quot;)
+	static void UStructToJsonObjectString(const int32&amp; StructReference, FString&amp; JSONString);
+
+/// Custom execFunciton thunk for function UStructToJsonObjectString.
+DECLARE_FUNCTION(execUStructToJsonObjectString)
+{
+	//Get input wildcard single variable
+	Stack.Step(Stack.Object, NULL);
+	UStructProperty* StructProperty = ExactCast&lt;UStructProperty&gt;(Stack.MostRecentProperty);
+	void* StructPtr = Stack.MostRecentPropertyAddress;
+
+	//Get JsonString reference
+	P_GET_PROPERTY_REF(UStrProperty, JSONString);
+	P_FINISH;
+
+	P_NATIVE_BEGIN;
+	FJsonObjectConverter::UStructToJsonObjectString(StructProperty-&gt;Struct, StructPtr, JSONString, 0, 0);
+	P_NATIVE_END;
+}
+</code></pre>
+<p>特别提醒：从UStruct to Json String 输出截图，可以看到ue4内置的 FJsonObjectConverter :: UStructToJsonObjectString()函数存在二个小问题：其一：结构体的变量名首字母被改成小写字母；其二：在蓝图中定义的结构体的变量名与转换后JSONString中的变量名存在明显差异，原因在于如下图所示的源代码第 261行。修复方法：可以用一个自定义函数获取VariableName，请自行修复。<br>
+<img src="https://xusjtuer.github.io/post-images/1601111210868.jpg" alt="" loading="lazy"></p>
+<center style="font-size:10px;color:#C0C0C0;text-decoration:none">图4. UStructToJsonObjectString问题源代码；</center> <br />
+<h2 id="22-is-valid-index节点"><strong>2.2</strong> Is Valid Index节点</h2>
+<p><strong>功能</strong>：判断TargetArray是否(length &gt; 0)为空，若为非空（length&gt;0），执行IsValid PIN执行流引脚；如为空(length==0)，执行Is Not Valid PIN执行流引脚，等价于如下图所示的蓝图宏<br>
+<img src="https://xusjtuer.github.io/post-images/1601111284416.jpg" alt="" loading="lazy"></p>
+<center style="font-size:10px;color:#C0C0C0;text-decoration:none">图5. Is Valid节点等价蓝图宏；</center> <br />
+<figure data-type="image" tabindex="2"><img src="https://xusjtuer.github.io/post-images/1601111325875.jpg" alt="" loading="lazy"></figure>
+<center style="font-size:10px;color:#C0C0C0;text-decoration:none">图6. Is Valid节点使用示例；</center> <br />
+<figure data-type="image" tabindex="3"><img src="https://xusjtuer.github.io/post-images/1601111363437.jpg" alt="" loading="lazy"></figure>
+<center style="font-size:10px;color:#C0C0C0;text-decoration:none">图7. Is Valid节点输出Log；</center> <br />
+<p>由于Is Valid节点含有多个输出执行流引脚，需要使用&quot;ExpandEnumAsExecs&quot;说明符，将枚举类型的成员作为执行流引脚。</p>
+<p>Is Valid泛型蓝图节点实现代码：</p>
+<p>实现定义执行流引脚的枚举类型（.h文件）</p>
+<pre><code class="language-cpp">// Expand Enum As Execs
+UENUM()
+enum class EEvaluateArray : uint8
+{
+	/** Array length &gt; 0. */
+	IsValid,
+	/** Array length == 0. */
+	IsNotValid
+};
+</code></pre>
+<p>// .h文件，声明泛型蓝图节点，实现Thunk函数体</p>
+<pre><code class="language-cpp">/*
+	*Determines if an aray is valid(length &gt; 0) ?
+	*
+	*@param	TargetArray		The array to get the length
+*/
+UFUNCTION(BlueprintCallable, CustomThunk, meta = (DisplayName = &quot;Is Valid ?&quot;, ArrayParm = &quot;TargetArray&quot;, Keywords = &quot;num, size,valid&quot;,ExpandEnumAsExecs = &quot;EvaluateArrayPIN&quot;, BlueprintThreadSafe), Category = &quot;Utilities|Array&quot;)
+	static void Array_Validv2(const TArray&lt;int32&gt;&amp; TargetArray, EEvaluateArray&amp; EvaluateArrayPIN);
+static void GenericArray_Validv2(void* ArrayAddr, UArrayProperty* ArrayProperty, EEvaluateArray&amp; EvaluateArrayPIN);
+
+DECLARE_FUNCTION(execArray_Validv2)
+{
+	Stack.MostRecentProperty = nullptr;
+	Stack.StepCompiledIn&lt;UArrayProperty&gt;(NULL);
+	void* ArrayAddr = Stack.MostRecentPropertyAddress;
+	UArrayProperty* ArrayProperty = Cast&lt;UArrayProperty&gt;(Stack.MostRecentProperty);
+	if (!ArrayProperty)
+	{
+		Stack.bArrayContextFailed = true;
+		return;
+	}
+
+	P_GET_ENUM_REF(EEvaluateArray, EvaluateArrayPIN);
+
+	P_FINISH;
+
+	P_NATIVE_BEGIN;
+	GenericArray_Validv2(ArrayAddr, ArrayProperty, EvaluateArrayPIN);
+	P_NATIVE_END;
+}
+</code></pre>
+<p>// .cpp文件，实现泛型函数</p>
+<pre><code class="language-cpp">void UMiscAlgorithm::GenericArray_Validv2(void* ArrayAddr, UArrayProperty* ArrayProperty, EEvaluateArray&amp; EvaluateArrayPIN)
+{
+	// Determine whether the array length is greater than 0
+	bool bValidArray = UKismetArrayLibrary::GenericArray_Length(ArrayAddr, ArrayProperty) &gt; 0;
+
+	if (bValidArray == true)
+	{
+		// Exec IsValid PIN
+		EvaluateArrayPIN = EEvaluateArray::IsValid;
+	}
+	else
+	{
+		// Exec Is Not Valid PIN
+		EvaluateArrayPIN = EEvaluateArray::IsNotValid;
+	}
+}
+</code></pre>
+<h2 id="23-filter-array节点">2.3 Filter Array节点</h2>
+<p><strong>功能</strong>：根据在蓝图中自定义的筛选函数FilterBy，筛选数组成员<br>
+<img src="https://xusjtuer.github.io/post-images/1601111413595.jpg" alt="" loading="lazy"></p>
+<center style="font-size:10px;color:#C0C0C0;text-decoration:none">图8. Filter 泛型蓝图节点使用示例；</center> <br />
+<p>自定义筛选函数 FilterBy，必须为二个参数；第一个为输入参数，类型与数组类型相同；第二个为返回值，类型为bool，并命名为&quot;ReturnValue&quot;。如下图所示，筛选字符串数组中字符长度在5和8之间的字符串。<br>
+<img src="https://xusjtuer.github.io/post-images/1601111461069.jpg" alt="" loading="lazy"></p>
+<center style="font-size:10px;color:#C0C0C0;text-decoration:none">图9. 自定义筛选函数示例；</center> <br />
+<figure data-type="image" tabindex="4"><img src="https://xusjtuer.github.io/post-images/1601111487498.jpg" alt="" loading="lazy"></figure>
+<center style="font-size:10px;color:#C0C0C0;text-decoration:none">图10. Filter节点输入Log；</center> <br />
+<p>Filter节点实现代码如下：</p>
+<p>// .h文件</p>
+<pre><code class="language-cpp">/*
+	*Filter an array based on filter function of object.
+	*
+	*@param	Object		The owner of function
+	*@param	FilterBy	Filter function name, this custom function with 2 parameters,
+						1 input (Type same as array member), 1 return named &quot;ReturnValue&quot;(bool)
+	*@param	TargetArray	 The array to filter from
+	*@return	An array containing only those members which meet the filterBy condition.
+*/
+UFUNCTION(BlueprintCallable, CustomThunk, meta = (DisplayName = &quot;Filter Array&quot;, CompactNodeTitle = &quot;Filter&quot;, ArrayParm = &quot;TargetArray,FilteredArray&quot;, ArrayTypeDependentParams = &quot;TargetArray,FilteredArray&quot;, AutoCreateRefTerm = &quot;FilteredArray&quot;, DefaultToSelf = &quot;Object&quot;, AdvancedDisplay = &quot;Object&quot;), Category = &quot;Utilities|Array&quot;)
+	static void Array_Filter(const UObject* Object, const FName FilterBy, const TArray&lt;int32&gt;&amp; TargetArray, TArray&lt;int32&gt;&amp; FilteredArray);
+static void GenericArray_Filter(UObject* Object, UFunction* FilterFunction, const UArrayProperty* ArrayProp, void* SrcArrayAddr, void* FilterArrayAddr);
+
+DECLARE_FUNCTION(execArray_Filter)
+{
+	P_GET_OBJECT(UObject, OwnerObject);
+	P_GET_PROPERTY(UNameProperty, FilterBy);
+
+	//Find filter function
+	UFunction* const FilterFunction = OwnerObject-&gt;FindFunction(FilterBy);
+	// Fitler function must have two parameters(1 input / 1 output)
+	if (!FilterFunction || (FilterFunction-&gt;NumParms != 2))
+	{
+		UE_LOG(LogTemp, Warning, TEXT(&quot;Tooltip -&gt; Array_Filter -&gt; Please check filter function %s &quot;), *FilterBy.ToString());
+		return;
+	}
+
+	// Get target array  address and ArrayProperty
+	Stack.MostRecentProperty = nullptr;
+	Stack.StepCompiledIn&lt;UArrayProperty&gt;(NULL);
+	void* SrcArrayAddr = Stack.MostRecentPropertyAddress;
+	UArrayProperty* SrcArrayProperty = Cast&lt;UArrayProperty&gt;(Stack.MostRecentProperty);
+	if (!SrcArrayProperty)
+	{
+		Stack.bArrayContextFailed = true;
+		return;
+	}
+
+	// Get filtered array address and arrayproperty
+	Stack.MostRecentProperty = nullptr;
+	Stack.StepCompiledIn&lt;UArrayProperty&gt;(NULL);
+	void* FilterArrayAddr = Stack.MostRecentPropertyAddress;
+	UArrayProperty* FilterArrayProperty = Cast&lt;UArrayProperty&gt;(Stack.MostRecentProperty);
+	if (!FilterArrayProperty)
+	{
+		Stack.bArrayContextFailed = true;
+		return;
+	}
+	P_FINISH;
+
+	P_NATIVE_BEGIN;
+	// ScrArrayProperty is equal to FilterArrayProperty
+	GenericArray_Filter(OwnerObject, FilterFunction, SrcArrayProperty, SrcArrayAddr, FilterArrayAddr);
+	P_NATIVE_END;
+}
+</code></pre>
+<p>// .cpp文件</p>
+<pre><code class="language-cpp">void UMiscAlgorithm::GenericArray_Filter(UObject* Object, UFunction* FilterFunction, const UArrayProperty* ArrayProp, void* SrcArrayAddr, void* FilterArrayAddr)
+{
+	//check input parameters
+	if (!Object || !FilterFunction || !SrcArrayAddr)
+	{
+		return;
+	}
+	// filter function return property
+	UBoolProperty* ReturnProp = Cast&lt;UBoolProperty&gt;(FilterFunction-&gt;GetReturnProperty());
+	if (!ReturnProp)
+	{
+		/// The return Property of filter function must be bool and named &quot;ReturnValue&quot;
+		UE_LOG(LogTemp, Warning, TEXT(&quot;Tooltip -&gt; GenericArray_Filter -&gt; Pleas check return value of filter function.(Type:bool, Name:ReturnValue)&quot;));
+		return;
+	}
+
+	// Get function parameter list
+	TArray&lt;UProperty*&gt; ParamterList;
+	for (TFieldIterator&lt;UProperty&gt; It(FilterFunction); It; ++It)
+	{
+		UProperty* FuncParameter = *It;
+		/// Get filter function parameters
+		ParamterList.Emplace(FuncParameter);
+	}
+	/// Make sure the first input parameters of filter function is same to array inner
+	if (!ParamterList[0]-&gt;SameType(ArrayProp-&gt;Inner))
+	{
+		/// The  property of 1st input parameter of filter function must be same as array member
+		UE_LOG(LogTemp, Warning, TEXT(&quot;Tooltip -&gt; GenericArray_Filter -&gt; Pleas check input parameter of filter function.(Type is same as array member)&quot;));
+		return;
+	}
+
+	FScriptArrayHelper ArrayHelper(ArrayProp, SrcArrayAddr);
+	FScriptArrayHelper FilterArray(ArrayProp, FilterArrayAddr);
+
+	UProperty* InnerProp = ArrayProp-&gt;Inner;
+	const int32 PropertySize = InnerProp-&gt;ElementSize * InnerProp-&gt;ArrayDim;
+	// filter function parameters address, 1 input parameter(array item) and 1 return parameter (bool)
+	uint8* FilterParamsAddr = (uint8*)FMemory::Malloc(PropertySize + 1);
+	for (int32 i = 0; i &lt; ArrayHelper.Num(); i++)
+	{
+		FMemory::Memzero(FilterParamsAddr, PropertySize + 1);
+		// get array member and assign value to filter function input parameter
+		InnerProp-&gt;CopyCompleteValueFromScriptVM(FilterParamsAddr, ArrayHelper.GetRawPtr(i));
+		//process filter function
+		Object-&gt;ProcessEvent(FilterFunction, FilterParamsAddr);
+		if (ReturnProp &amp;&amp; ReturnProp-&gt;GetPropertyValue(FilterParamsAddr + PropertySize))
+		{
+			// add item to filter array
+			UKismetArrayLibrary::GenericArray_Add(FilterArrayAddr, ArrayProp, ArrayHelper.GetRawPtr(i));
+		}
+	}
+	// relesed memory
+	FMemory::Free(FilterParamsAddr);
+}
+</code></pre>
+<p><em>以上节点源代码可见：<a href="https://link.zhihu.com/?target=https%3A//github.com/xusjtuer/NoteUE4">https://github.com/xusjtuer/NoteUE4</a></em></p>
+<h1 id="3-conclusion">3. Conclusion</h1>
+<p>总结：到目前为止，已经使用泛型蓝图节点实现了多种功能，第2期 任意类型数组排序SORT节点，第3期 Object任意类型属性的GET/SET节点，以及这一期介绍的3个节点：任意类型结构体转字符串StructToJsonObjectString节点、判断数组是否为空IsValid节点、以及数组筛选Filter节点。泛型蓝图节点更多的应用，需要在实践中不断发掘与探索。未来，自己也会尝试将一些泛型蓝图节点提交到引擎源码中去，也是为虚幻引擎做出贡献。</p>
+<p>至此，基于CustomThunk的泛型蓝图节点实现过程已经全部讲完了，<strong>以上内容如觉有帮助，请不吝点赞；如觉无聊，可一带而过。</strong></p>
+
+                </div>
+            </article>
+        </div>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="https://xusjtuer.github.io/post/ue4-post4_generic_bluerpint_function_customthunk1/" class="post-title gt-a-link">
+                    UE4 基于CustomThunk的泛型蓝图节点语法规范 (一)
+                </a>
+            </div>
+        
+
+        
+
+        
+
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first">海阔凭鱼跃，天高任鸟飞</div>
+    <div class="social-container">
+        
+            
+                <a href="https://github.com/xusjtuer" target="_blank">
+                    <i class="fab fa-github gt-c-content-color-first"></i>
+                </a>
+            
+        
+            
+        
+            
+        
+            
+                <a href="https://www.zhihu.com/people/tong-nian-de-qin" target="_blank">
+                    <i class="fab fa-zhihu gt-c-content-color-first"></i>
+                </a>
+            
+        
+            
+        
+            
+        
+    </div>
+    <div class="footer-info">
+        Powered by <a href="https://github.com/xusjtuer" target="_blank">xusjtuer</a>
+    </div>
+    <div>
+        Theme by <a href="https://imhanjie.com/" target="_blank">imhanjie</a>, Powered by <a
+                href="https://github.com/getgridea/gridea" target="_blank">Gridea | <a href="https://xusjtuer.github.io/atom.xml" target="_blank">RSS</a></a>
+    </div>
+</div>
+
+<script>
+  hljs.initHighlightingOnLoad()
+</script>
+
+    </div>
+</div>
+</body>
+</html>
