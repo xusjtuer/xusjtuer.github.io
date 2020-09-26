@@ -1,0 +1,512 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>UE4 泛型蓝图节点的实现及应用实例 | 童年的琴-博客</title>
+<meta name="description" content="海阔凭鱼跃，天高任鸟飞" />
+<link rel="shortcut icon" href="https://xusjtuer.github.io/favicon.ico">
+<link rel="stylesheet" href="https://xusjtuer.github.io/styles/main.css">
+
+<script src="https://xusjtuer.github.io/media/js/jquery.min.js"></script>
+<script src="https://xusjtuer.github.io/media/js/masonry.pkgd.min.js"></script>
+<script src="https://xusjtuer.github.io/media/js/aos.js"></script>
+<script src="https://xusjtuer.github.io/media/js/pace.min.js"></script>
+<script src="https://xusjtuer.github.io/media/js/view-image.min.js"></script>
+<script src="https://xusjtuer.github.io/media/js/jquery.magnific-popup.min.js"></script>
+<script src="https://xusjtuer.github.io/media/js/functions.js"></script>
+    <meta name="referrer" content="never">
+    <meta name="description" content="1. Overview
+本教程旨在讲解使用ue4 UFUNCTION说明符（Specifier）自定义泛型蓝图节点，实现UObject的任意类型属性（UProperty）GET/SET方法。如下四个泛型蓝图节点，依据UObject对象的Pr..." />
+    <meta name="keywords" content="wildcard,ue4 c++,generic" />
+    <script src="https://xusjtuer.github.io/media/js/waterfall.min.js"></script>
+    <script src="https://xusjtuer.github.io/media/js/prism.min.js"></script>
+  </head>
+  <body>
+            <header id="header" class="grid-container">
+        <!-- start: .menu-wrapper -->
+        <div class="menu-mobile"> 
+          <i class="fa fa-reorder"></i>
+        </div>
+        <div class="menu-wrapper">
+          <div class="">
+            <div class="logo">
+              <a href="https://xusjtuer.github.io"><img src="/media/images/logoo.png" alt=""></a>
+            </div>
+            <!-- start: .main-nav -->
+
+            <nav class="main-nav grid-container grid-parent">
+              <ul id="menu-header" class="menu gradient-effect">
+                <li class=""><a href="https://xusjtuer.github.io" class="menu">首页</a></li>
+                
+                  <li class="" >
+                    <a href="/" class="menu">
+                      首页
+                    </a>
+                  </li>
+                
+                  <li class="" >
+                    <a href="/archives" class="menu">
+                      归档
+                    </a>
+                  </li>
+                
+                  <li class="" >
+                    <a href="/tags" class="menu">
+                      标签
+                    </a>
+                  </li>
+                
+                  <li class="" >
+                    <a href="/post/about" class="menu">
+                      关于
+                    </a>
+                  </li>
+                
+                <li class="search-menu-item hide-on-mobile hide-on-tablet"><a href="#search-lightbox" class="lightbox mfp-inline"><i class="fa fa-search-line"></i></a></li>
+              </ul>
+            </nav>
+            <a href="#search-lightbox" class="lightbox epcl-search-button mfp-inline hide-on-tablet hide-on-desktop"><i class="fa fa-search-line"></i></a>
+            <!-- end: .main-nav -->
+            <div class="clear"></div>
+            <div class="border hide-on-tablet hide-on-mobile"></div>
+          </div>    
+          <div class="clear"></div>
+        </div>
+        <!-- end: .menu-wrapper -->
+        <div class="clear"></div>
+      </header>
+      <div class="hide-on-mobile hide-on-tablet hide-on-desktop">
+        <div id="search-lightbox" class="grid-container grid-small grid-parent mfp-hide">
+          <div class="search-wrapper section">
+            <form id="gridea-search-form" data-update="1601104964742" action="/search/index.html" class="search-form" _lpchecked="1">
+              <input type="text" name="q" id="s" value="" class="search-field" placeholder="搜点啥..." aria-label="搜点啥..." required="">
+              <button type="submit" class="submit" aria-label="Submit">
+                <i class="fa fa-search-line"></i>
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <main id="single" class="main grid-container fullcover no-sidebar aos-init aos-animate" data-aos="fade">
+
+        <div class="center content">
+          <div class="featured-image cover" style="background-image: url('https://xusjtuer.github.io/post-images/ue4-fan-xing-lan-tu-jie-dian-de-shi-xian-ji-ying-yong-shi-li.jpg');">
+            <div class="meta top"> 
+              <time class="meta-info" style="float:left;" datetime="2020-09-14"><i class="fa fa-calendar"></i><span class="lately">3 个月前</span></time>
+              
+              <a href="https://xusjtuer.github.io/post/ue4-fan-xing-lan-tu-jie-dian-de-shi-xian-ji-ying-yong-shi-li/#comments" class="comments meta-info" title="">
+                <i class="fa fa-comment remixicon"></i><span class="comment-count valine-comment-count" data-xid="/ue4-fan-xing-lan-tu-jie-dian-de-shi-xian-ji-ying-yong-shi-li/"> </span>
+              </a>
+              <span id="/ue4-fan-xing-lan-tu-jie-dian-de-shi-xian-ji-ying-yong-shi-li/" class="leancloud_visitors views-counter meta-info" title=""><i class="fa fa-leancloud remixicon"></i><span class="leancloud-visitors-count"></span></span>
+              
+            </div>
+            <div class="info">
+              <div class="tags ">
+                
+                      <a href="https://xusjtuer.github.io/tag/l7UgE4BWu/" class="ctag ctag-0 ctag-l7UgE4BWu" aria-label="">wildcard</a>
+                    
+                      <a href="https://xusjtuer.github.io/tag/chYkJdpez/" class="ctag ctag-1 ctag-chYkJdpez" aria-label="">ue4 c++</a>
+                    
+                      <a href="https://xusjtuer.github.io/tag/I8veTBffD8/" class="ctag ctag-2 ctag-I8veTBffD8" aria-label="">generic</a>
+                    
+              </div>
+              <h1 class="title ularge white bold">UE4 泛型蓝图节点的实现及应用实例</h1>
+            </div>
+          </div>
+        </div>  
+
+        <div class="epcl-page-wrapper">
+          <div class="left-content grid-70 np-mobile">
+            <article class="main-article post">
+              <section class="post-content">
+                <div class="text">
+                  <h1 id="1-overview">1. Overview</h1>
+<p>本教程旨在讲解使用ue4 UFUNCTION说明符（Specifier）自定义泛型蓝图节点，实现UObject的任意类型属性（UProperty）GET/SET方法。如下四个泛型蓝图节点，依据UObject对象的PropertyName，GET/SET属性值，适用于v4.25之前版本。<br>
+<img src="https://xusjtuer.github.io/post-images/1601103376708.jpg" alt="" loading="lazy"></p>
+<center style="font-size:10px;color:#C0C0C0;text-decoration:none">图1. 泛型蓝图节点；</center> <br />
+<h1 id="2-introduction">2. Introduction</h1>
+<p>泛型蓝图节点也就是带有可变参数的蓝图节点，通用指蓝图系统中带有通配符（wildcard）类型参数的蓝图节点。实现泛型蓝图节点至少有二种方式，其一，继承<code>UK2Node</code>类，并根据需要实现其派生类，如常用的<code>Cast节点</code>，<code>Set By-Ref Var</code>节点等都属于此类；其二，使用<code>UFUNCTION</code>中<code>CustomThunk</code>说明符以及相应的类型说明符标识wildcard参数，并为该蓝图函数自定义<code>DECLARE_FUNCTION()</code>函数体，如Utilities|Array，Utilities|Map，Utilities|Set 目录下，三种容器Array、Map、Set各类操作的蓝图节点都属于此类。此外ue4内置的蓝图节点还存在着将二者结合的蓝图节点<code>GetDataTableRow</code>，<code>UK2Node_GetDataTableRow</code>类(基类UK2Node)在Editor状态下动态更新Pin，<code>UDataTableFunctionLibrary</code>类中<code>GetDataTableRowFromName</code>函数在Runtime状态下，执行具体的<code>GetDataTableRowFromName</code>方法，将DataTable中的<code>RowStruct</code>拷贝到<code>OutRowStruct</code>。以上二种方式各有其优缺点，本次讲解采用代码量少、实现难度低的第二种方式。</p>
+<h1 id="3-required-knowledge">3. Required Knowledge</h1>
+<ol>
+<li>
+<p>熟悉UE4 C++ UFUNCTION宏常用关键字，</p>
+</li>
+<li>
+<p>自定义execFunction函数体;（预计下一讲）</p>
+</li>
+</ol>
+<h1 id="4-why">4. Why</h1>
+<p><strong>第1个问题：为什么要实现这样一类节点？</strong></p>
+<p>目的：（1）提升自身的编程水平，加深个人对于泛型蓝图节点的理解；（2）减少蓝图之间的引用，提升蓝图执行性能。</p>
+<p>如下图所示，从<strong>BP_Actor</strong>蓝图（基类<strong>Actor</strong>）中获取<strong>ThirdPersonCharacter</strong>蓝图的<strong>Health</strong>属性，左边是一种常见的方式(使用<code>Cast</code>节点)，右边则是使用一个自定义实现的泛型蓝图节点GET/SET节点。二种获取<strong>Character</strong>属性的方法对<strong>BP_Actor</strong>的影响却显著不同，使用<code>Cast</code>节点增加了<strong>BP_Actor</strong>的引用，使得<strong>SizeMap</strong>暴增，显著影响性能（附：把属性（Property）定义在c++基类，<code>Cast to</code> c++类，也可以获得到蓝图的该属性，同时也可以使二个蓝图的引用断开）。<br>
+<img src="https://xusjtuer.github.io/post-images/1601103416137.png" alt="" loading="lazy"></p>
+<center style="font-size:10px;color:#C0C0C0;text-decoration:none">图2. 二种获取UProperty值得方法；</center> <br />
+<p>那么断开二个蓝图的引用有什么好处？ue4 中c++和蓝图除了广为人知的效率差异，另外一个重要区别在于内存和加载（<strong>Memory and Loading</strong>）方式差异，蓝图引用增多可能导致内存消耗变大以及加载时间变长（详情见虚幻引擎官方视频，<a href="https://www.bilibili.com/video/BV1sJ41167np">[FestEurope2019] 蓝图深入探讨 | Blueprints In-depth</a>，因此减少蓝图之间相互引用对于提升性能有着关键的作用。</p>
+<p>回到主题，在ue4中实现泛型蓝图节点，获取UObject的任意属性。如下图示例，以获取UProperty属性为例，根据变量名PropertyName获取Target（ActorBP）获取属性Value，并将获取到的属性值保存在This变量中，获取不同类型（bool、Byte、integer、float、String、Name、Vector、Rotator、Transform、任意UStruct）的属性都是使用同一个节点。<br>
+<img src="https://xusjtuer.github.io/post-images/1601103499364.jpg" alt="" loading="lazy"></p>
+<center style="font-size:10px;color:#C0C0C0;text-decoration:none">图3. 泛型蓝图节点GET/SET使用示例；</center> <br />
+<figure data-type="image" tabindex="1"><img src="https://xusjtuer.github.io/post-images/1601103508412.jpg" alt="" loading="lazy"></figure>
+<center style="font-size:10px;color:#C0C0C0;text-decoration:none">图4. 输出日志LOG；</center> <br />
+<pre><code class="language-text">LogBlueprintUserMessages: [BP_Actor_2] Tooltip -&gt; Before GET ,This Bool-&gt; false ,This Byte-&gt; 0 ,This Integer-&gt; 0 ,This Float-&gt; 0.0 ,This String-&gt; ,This Transform-&gt; Translation: X=0.000 Y=0.000 Z=0.000 Rotation: P=0.000000 Y=0.000000 R=0.000000 Scale X=1.000 Y=1.000 Z=1.000 ,This Struct-&gt; {&quot;B&quot;: 0, &quot;G&quot;: 0, &quot;R&quot;: 0, &quot;A&quot;: 0}
+LogBlueprintUserMessages: [BP_Actor_2] Tooltip -&gt; After GET ,This Bool-&gt; true ,This Byte-&gt; 10 ,This Integer-&gt; 10 ,This Float-&gt; 15.0 ,This String-&gt; Unreal Engine ,This Transform-&gt; Translation: X=70.000 Y=80.000 Z=90.000 Rotation: P=69.999931 Y=120.000008 R=-79.999908 Scale X=0.100 Y=0.200 Z=0.300 ,This Struct-&gt; {&quot;B&quot;: 156, &quot;G&quot;: 253, &quot;R&quot;: 255, &quot;A&quot;: 1}
+</code></pre>
+<p><strong>第2个问题：为什么能实现一个这样的节点？</strong></p>
+<p>UObject对象支持根据属性名（PropertyName）查找属性（UProperty），然后可以取得PropertyValue。因此基于PropertyName获取UObject PropertyValue是理论可行的，并且ue4源码<code>KismetSystemLibray</code>类中已经向我们展示一些UObject对象不同类型（<code>int32 / uint8 / float / bool</code>等等）属性的<code>Set Property by name</code> 函数的实现方式，但是这些函数仅供蓝图内部使用。</p>
+<pre><code class="language-c++">// --- 'Set property by name' functions ------------------------------
+
+	/** Set an int32 property by name */
+	UFUNCTION(BlueprintCallable, meta=(BlueprintInternalUseOnly = &quot;true&quot;))
+	static void SetIntPropertyByName(UObject* Object, FName PropertyName, int32 Value);
+	
+	/** Set an int64 property by name */
+	UFUNCTION(BlueprintCallable, meta=(BlueprintInternalUseOnly = &quot;true&quot;))
+	static void SetInt64PropertyByName(UObject* Object, FName PropertyName, int64 Value);
+
+	/** Set an uint8 or enum property by name */
+	UFUNCTION(BlueprintCallable, meta=(BlueprintInternalUseOnly = &quot;true&quot;))
+	static void SetBytePropertyByName(UObject* Object, FName PropertyName, uint8 Value);
+
+	/** Set a float property by name */
+	UFUNCTION(BlueprintCallable, meta=(BlueprintInternalUseOnly = &quot;true&quot;))
+	static void SetFloatPropertyByName(UObject* Object, FName PropertyName, float Value);
+
+	/** Set a bool property by name */
+	UFUNCTION(BlueprintCallable, meta=(BlueprintInternalUseOnly = &quot;true&quot;))
+	static void SetBoolPropertyByName(UObject* Object, FName PropertyName, bool Value);
+
+	/** Set an OBJECT property by name */
+	UFUNCTION(BlueprintCallable, meta=(BlueprintInternalUseOnly = &quot;true&quot;))
+	static void SetObjectPropertyByName(UObject* Object, FName PropertyName, UObject* Value);
+
+	/** Set a CLASS property by name */
+	UFUNCTION(BlueprintCallable, meta = (BlueprintInternalUseOnly = &quot;true&quot;))
+	static void SetClassPropertyByName(UObject* Object, FName PropertyName, TSubclassOf&lt;UObject&gt; Value);
+
+	/** Set an INTERFACE property by name */
+	UFUNCTION(BlueprintCallable, Category = &quot;Collision&quot;, meta = (BlueprintInternalUseOnly = &quot;true&quot;))
+	static void SetInterfacePropertyByName(UObject* Object, FName PropertyName, const FScriptInterface&amp; Value);
+
+	/** Set a NAME property by name */
+	UFUNCTION(BlueprintCallable, meta=(BlueprintInternalUseOnly = &quot;true&quot;, AutoCreateRefTerm = &quot;Value&quot; ))
+	static void SetNamePropertyByName(UObject* Object, FName PropertyName, const FName&amp; Value);
+
+	/** Set a SOFTOBJECT property by name */
+	UFUNCTION(BlueprintCallable, meta = (BlueprintInternalUseOnly = &quot;true&quot;, AutoCreateRefTerm = &quot;Value&quot;))
+	static void SetSoftObjectPropertyByName(UObject* Object, FName PropertyName, const TSoftObjectPtr&lt;UObject&gt;&amp; Value);
+
+	/** Set a SOFTCLASS property by name */
+	UFUNCTION(BlueprintCallable, meta = (BlueprintInternalUseOnly = &quot;true&quot;, AutoCreateRefTerm = &quot;Value&quot;))
+	static void SetSoftClassPropertyByName(UObject* Object, FName PropertyName, const TSoftClassPtr&lt;UObject&gt;&amp; Value);
+
+	/** Set a STRING property by name */
+	UFUNCTION(BlueprintCallable, meta=(BlueprintInternalUseOnly = &quot;true&quot;, AutoCreateRefTerm = &quot;Value&quot; ))
+	static void SetStringPropertyByName(UObject* Object, FName PropertyName, const FString&amp; Value);
+
+	/** Set a TEXT property by name */
+	UFUNCTION(BlueprintCallable, meta=(BlueprintInternalUseOnly = &quot;true&quot;, AutoCreateRefTerm = &quot;Value&quot; ))
+	static void SetTextPropertyByName(UObject* Object, FName PropertyName, const FText&amp; Value);
+
+	/** Set a VECTOR property by name */
+	UFUNCTION(BlueprintCallable, meta=(BlueprintInternalUseOnly = &quot;true&quot;, AutoCreateRefTerm = &quot;Value&quot; ))
+	static void SetVectorPropertyByName(UObject* Object, FName PropertyName, const FVector&amp; Value);
+
+	/** Set a ROTATOR property by name */
+	UFUNCTION(BlueprintCallable, meta=(BlueprintInternalUseOnly = &quot;true&quot;, AutoCreateRefTerm = &quot;Value&quot; ))
+	static void SetRotatorPropertyByName(UObject* Object, FName PropertyName, const FRotator&amp; Value);
+
+	/** Set a LINEAR COLOR property by name */
+	UFUNCTION(BlueprintCallable, meta=(BlueprintInternalUseOnly = &quot;true&quot;, AutoCreateRefTerm = &quot;Value&quot; ))
+	static void SetLinearColorPropertyByName(UObject* Object, FName PropertyName, const FLinearColor&amp; Value);
+
+	/** Set a TRANSFORM property by name */
+	UFUNCTION(BlueprintCallable, meta=(BlueprintInternalUseOnly = &quot;true&quot;, AutoCreateRefTerm = &quot;Value&quot; ))
+	static void SetTransformPropertyByName(UObject* Object, FName PropertyName, const FTransform&amp; Value);
+</code></pre>
+<center style="font-size:10px;color:#C0C0C0;text-decoration:none">源代码中SetPropertyByName函数；</center> <br />
+<p>每一种类型Property都有二个基本属性，<code>PropertyAddress（void*）</code>和Property Size。而GET方法的本质上可以描述为：在获取UObject的属性(Property)后，将该属性所指向内存区域的值拷贝到返回值变量的内存区域，即返回值变量获取到Object-&gt;Property Value；SET方法则是逆过程，同样在找到Object的属性后，将输入值变量所指向内存区域的值拷贝到Object的相应属性指向的内存区域。</p>
+<p>不同类型的Property除了内存地址不一样，所占用的内存空间大小也不一样，只有保证内存空间一样，也就是同一类属性才可以相互复制而不至于引起程序崩溃。对于派生于UProperty类的类型，如<code>UBoolProerty / UEnumProperty / UNumericProperty / UStructProperty</code>等都可以直接用<code>UProperty*</code>指示Property占用内存空间的大小。派生于TProperty类的类型，如<code>UArrayProperty / UMapProperty / USetProperty</code>， 则需要分别使用<code>UArrayProperty* / UMapProperty* / USetProperty*</code>来表示内存空间大小。</p>
+<p>仿照源代码<code>KismetSystemLibray</code>类中<code>Set Property by Name</code> 函数，明显可以得出我们的泛型蓝图节点的引脚（PIN）参数应该按如下设计：</p>
+<p><strong>GET节点：</strong></p>
+<blockquote>
+<p>输入参数：UObjct* Object<br>
+输入参数：FName PropertyName<br>
+输出参数：void* Value</p>
+</blockquote>
+<p><strong>SET节点：</strong></p>
+<blockquote>
+<p>输入参数：UObjct* Object<br>
+输入参数：FName PropertyName<br>
+输入参数：void* Value</p>
+</blockquote>
+<p><strong>进一步分析以上设计存在二个问题：</strong></p>
+<p><strong>其一</strong>： GET方法，仅传入Object和PropertyName，在编译阶段传入的Object Class可能并没有名为PropertyName的属性，故而无法确定返回值的类型，也就没法正确编译。因此需要在输入参数列表中添加一个指示返回值类型的输入参数。为了使用的方便，不妨直接将这个参数表示成void*类型，那么该参数不仅可以标识返回值类型，而且还可用来存储返回结果。综上：修改后的GET方法和SET方法形式上将会完全相同。</p>
+<p><strong>其二</strong>, 蓝图函数（BlueprintCallable），不支持void类型参数</p>
+<p>如下示例代码：</p>
+<pre><code class="language-c++">UFUNCTION(BlueprintCallable, Category = &quot;MyProject&quot;)
+	void FunctionName(void* Variable);
+</code></pre>
+<p>编译报错</p>
+<blockquote>
+<p><font size=5 color="red">error : Unrecognized type 'void' - type must be a UCLASS, USTRUCT or UENUM</font></p>
+</blockquote>
+<p>解决方法：</p>
+<pre><code class="language-c++">UFUNCTION(BlueprintCallable, CustomThunk, meta = (CustomStructureParam = &quot;Variable&quot;, AutoCreateRefTerm = &quot;Variable&quot;), Category = &quot;MyProject&quot;)
+	void FunctionName(const int32&amp; Variable);
+DECLARE_FUNCTION(execFunctionName)
+{
+}
+</code></pre>
+<p>修改后的方法：</p>
+<p>其中CustomThunk的作用是指示UHT不需要为蓝图函数生成exec方法，使用自定义的execFunction，如上所示的</p>
+<pre><code class="language-c++">DECLARE_FUNCTION(execFunctionName)
+{
+}
+</code></pre>
+<p>其中，<code>CustomStructureParam = &quot;Variable&quot;</code>标识变量Variable为<code>wildcard</code>类型参数，<code>“const int32&amp; Variable”</code>并非表示Variable变量类型为const int32，该参数在此处相当于一个占位符，const + &amp; 指示该参数为输入参数；当然将int32替换成其他类型，也可以编译成功，此处为了与源代码保持一致。编译完成之后，可以在蓝图系统中找到如下节点：<br>
+<img src="https://xusjtuer.github.io/post-images/1601103530448.jpg" alt="" loading="lazy"></p>
+<center style="font-size:10px;color:#C0C0C0;text-decoration:none">图5. 泛型蓝图节点示例；</center> <br />
+<h1 id="5-approach"><strong>5. Approach</strong></h1>
+<p>以UBlueprintFunctionLibrary为基类，创建C++类，头文件（.h）</p>
+<p>(附：为了减少文章中的显示长度（知乎代码块不支持折叠），以下仅列举其中一个蓝图节点实现代码，完整代码见：<a href="https://link.zhihu.com/?target=https%3A//github.com/xusjtuer/NoteUE4">https://github.com/xusjtuer/NoteUE4</a>)</p>
+<p>//（1）声明泛型函数，在蓝图系统中产生了一个带Wildcard参数的蓝图节点（.h文件）：</p>
+<pre><code class="language-c++">/**
+* Get or Set object PROPERTY value by property name
+*
+* @param  Object, object that owns this PROPERTY
+* @param  PropertyName, property name
+* @param  Value(return), save returned object property(Get Operation) as well as indicate property type
+* @param  bSetter, If true, write Value to object property(Set operation). Otherwise, read object property and assign it to Value(Get operation)
+*/
+UFUNCTION(BlueprintCallable, CustomThunk, Category = &quot;Utilities|Variables&quot;, meta = (CustomStructureParam = &quot;Value&quot;, AutoCreateRefTerm = &quot;Value&quot;, DisplayName = &quot;GET/SET (Property)&quot;, CompactNodeTitle = &quot;GET/SET&quot;))
+	static void AccessPropertyByName(UObject* Object, FName PropertyName, const int32&amp; Value, bool bSetter = true);
+</code></pre>
+<p>// （2）自定义CustomThunk 函数体，实现从蓝图VM中获取输入参数值（.h文件）</p>
+<pre><code class="language-c++">  DECLARE_FUNCTION(execAccessPropertyByName)
+{
+	P_GET_OBJECT(UObject, OwnerObject);
+	P_GET_PROPERTY(UNameProperty, PropertyName);
+
+	Stack.StepCompiledIn&lt;UStructProperty&gt;(NULL);
+	void* SrcPropertyAddr = Stack.MostRecentPropertyAddress;
+	/// Reference: Plugins\Experimental\StructBox\Source\StructBox\Classes\StructBoxLibrary.h -&gt; execSetStructInBox
+	UProperty* SrcProperty = Cast&lt;UProperty&gt;(Stack.MostRecentProperty);
+
+	P_GET_UBOOL(bSetter);
+	P_FINISH;
+
+	P_NATIVE_BEGIN;
+	Generic_AccessPropertyByName(OwnerObject, PropertyName, SrcPropertyAddr, SrcProperty, bSetter);
+	P_NATIVE_END;
+}
+</code></pre>
+<p>// （3）声明实际执行GET/SET过程的函数（.h文件）</p>
+<pre><code class="language-c++">public: // Generic function
+
+// Get or set a UPROPERTY of UObject by property name
+static void Generic_AccessPropertyByName(UObject* OwnerObject, FName PropertyName, void* SrcPropertyAddr, UProperty* SrcProperty, bool bSetter = true);
+</code></pre>
+<p>// （4）实现Generic函数（.cpp文件）</p>
+<pre><code class="language-c++">void UParserPropertyLibrary::Generic_AccessPropertyByName(UObject* OwnerObject, FName PropertyName, void* SrcPropertyAddr, UProperty* SrcProperty, bool bSetter /*= true*/)
+{
+	if (OwnerObject != NULL)
+	{
+		UProperty* FoundProp = FindField&lt;UProperty&gt;(OwnerObject-&gt;GetClass(), PropertyName);
+
+		if ((FoundProp != NULL) &amp;&amp; (FoundProp-&gt;SameType(SrcProperty)))
+		{
+			void* Dest = FoundProp-&gt;ContainerPtrToValuePtr&lt;void&gt;(OwnerObject);
+			if (bSetter == true)
+			{
+				FoundProp-&gt;CopySingleValue(Dest, SrcPropertyAddr);
+			}
+			else
+			{
+				FoundProp-&gt;CopySingleValue(SrcPropertyAddr, Dest);
+			}
+			return;
+		}
+	}
+	UE_LOG(LogParserPropertyLibrary, Warning, TEXT(&quot;UParserPropertyLibrary::Generic_AccessPropertyByName: Failed to find %s variable from %s object&quot;), *PropertyName.ToString(), *UKismetSystemLibrary::GetDisplayName(OwnerObject));
+}
+</code></pre>
+<h2 id="6-conclusion"><strong>6. Conclusion</strong></h2>
+<p>本文主要介绍了自定义泛型蓝图节点的实现以及它的应用实例，实现了对UObject对象的任意属性的GET/SET方法，依据PropertyName，GET/SET UObject对象的属性UProperty。拓展：（1）将<code>bSetter</code>参数替换成<strong>操作符</strong>枚举，可以进一步扩充该泛型蓝图节点的应用，感兴趣的可以自己尝试。（2）是否可以将四个节点合并成一个节点。</p>
+
+                </div>
+                <div class="clear"></div>
+              </section>
+            </article>
+            <div class="clear"></div>
+
+            <section class="related section">
+              
+              
+              <article class="next grid-50 tablet-grid-50 grid-parent">
+                <div class="thumb cover lazy loaded" style="background-image: url('https://xusjtuer.github.io/post-images/ue4-cshi-xian-ren-yi-lei-xing-shu-zu-lan-tu-pai-xu-jie-dian.jpg');"></div>
+                 <a href="https://xusjtuer.github.io/post/ue4-cshi-xian-ren-yi-lei-xing-shu-zu-lan-tu-pai-xu-jie-dian/" class="full-link"></a>
+                 <div class="info">
+                  <time datetime="2020-09-14">2020-09-14</time>
+                  <h4 class="title white no-margin">UE4 C++实现任意类型数组蓝图排序节点（Quick Sort）</h4>
+                </div>
+                 <span class="epcl-button red">
+                  <img src="https://xusjtuer.github.io/media/images/right-arrow.svg" width="15" alt="Left Arrow">
+                </span>
+                <div class="overlay"></div>
+              </article>
+              
+
+                <div class="clear"></div>
+            </section>
+
+              <div class="clear"></div>
+              
+            
+              <div id="comments" class="bg-white hosted ">
+                <p>请到客户端“主题--自定义配置--valine”中填入ID和KEY</p>
+              </div>
+              <div class="clear"></div>
+            
+
+            </div>
+          </div>
+      </main>
+
+          <footer id="footer" class="grid-container">
+        <div class="widgets row gradient-effect">
+            <div class="default-sidebar border-effect">
+              <div class="grid-33 tablet-grid-50 mobile-grid-100">
+                <section id="tag_cloud-2" class="widget widget_epcl_posts_thumbs underline-effect">
+                  <h4 class="widget-title title white bordered">最新文章</h4>
+                  
+                  
+                  <article class="item post-0 post type-post status-publish format-standard has-post-thumbnail hentry">
+                    <a href="https://xusjtuer.github.io/post/ue4-fan-xing-lan-tu-jie-dian-de-shi-xian-ji-ying-yong-shi-li/" class="thumb hover-effect">
+                      <span class="fullimage cover" style="display:block;border-radius:50%;background-image: url('https://xusjtuer.github.io/post-images/ue4-fan-xing-lan-tu-jie-dian-de-shi-xian-ji-ying-yong-shi-li.jpg');"></span>
+                    </a>
+                    <div class="info gradient-effect">
+                      <time datetime="2020-09-14">2020-09-14</time>
+                      <h4 class="title usmall">
+                        <a href="https://xusjtuer.github.io/post/ue4-fan-xing-lan-tu-jie-dian-de-shi-xian-ji-ying-yong-shi-li/">UE4 泛型蓝图节点的实现及应用实例</a>
+                      </h4>
+                    </div>
+                    <div class="clear"></div>
+                  </article>
+                  
+                  
+                  
+                  <article class="item post-1 post type-post status-publish format-standard has-post-thumbnail hentry">
+                    <a href="https://xusjtuer.github.io/post/ue4-cshi-xian-ren-yi-lei-xing-shu-zu-lan-tu-pai-xu-jie-dian/" class="thumb hover-effect">
+                      <span class="fullimage cover" style="display:block;border-radius:50%;background-image: url('https://xusjtuer.github.io/post-images/ue4-cshi-xian-ren-yi-lei-xing-shu-zu-lan-tu-pai-xu-jie-dian.jpg');"></span>
+                    </a>
+                    <div class="info gradient-effect">
+                      <time datetime="2020-09-14">2020-09-14</time>
+                      <h4 class="title usmall">
+                        <a href="https://xusjtuer.github.io/post/ue4-cshi-xian-ren-yi-lei-xing-shu-zu-lan-tu-pai-xu-jie-dian/">UE4 C++实现任意类型数组蓝图排序节点（Quick Sort）</a>
+                      </h4>
+                    </div>
+                    <div class="clear"></div>
+                  </article>
+                  
+                  
+                  
+                  <article class="item post-2 post type-post status-publish format-standard has-post-thumbnail hentry">
+                    <a href="https://xusjtuer.github.io/post/ue4-dong-tai-du-xie-datatable-shu-ju-biao/" class="thumb hover-effect">
+                      <span class="fullimage cover" style="display:block;border-radius:50%;background-image: url('https://xusjtuer.github.io/post-images/ue4-dong-tai-du-xie-datatable-shu-ju-biao.jpg');"></span>
+                    </a>
+                    <div class="info gradient-effect">
+                      <time datetime="2020-09-14">2020-09-14</time>
+                      <h4 class="title usmall">
+                        <a href="https://xusjtuer.github.io/post/ue4-dong-tai-du-xie-datatable-shu-ju-biao/">UE4 蓝图实现任意类型数组排序</a>
+                      </h4>
+                    </div>
+                    <div class="clear"></div>
+                  </article>
+                  
+                  
+                  
+                  
+                  
+                  
+                  <div class="clear"></div>
+                </section>
+              </div>
+
+              <div class="grid-33 tablet-grid-50 mobile-grid-100">
+                <section id="tag_cloud-2" class="widget widget_tag_cloud underline-effect">
+                  <h4 class="widget-title title white bordered">标签云</h4>
+                  <div class="tagcloud">
+                    
+                      <a href="https://xusjtuer.github.io/tag/l7UgE4BWu/" class="ctag ctag-0 ctag-l7UgE4BWu" aria-label="">wildcard</a>
+                    
+                      <a href="https://xusjtuer.github.io/tag/chYkJdpez/" class="ctag ctag-1 ctag-chYkJdpez" aria-label="">ue4 c++</a>
+                    
+                      <a href="https://xusjtuer.github.io/tag/I8veTBffD8/" class="ctag ctag-2 ctag-I8veTBffD8" aria-label="">generic</a>
+                    
+                      <a href="https://xusjtuer.github.io/tag/I_n8ZHBFK/" class="ctag ctag-3 ctag-I_n8ZHBFK" aria-label="">blueprint</a>
+                    
+                      <a href="https://xusjtuer.github.io/tag/Gia1fWeOMs/" class="ctag ctag-4 ctag-Gia1fWeOMs" aria-label="">sort</a>
+                    
+                      <a href="https://xusjtuer.github.io/tag/SsOOifdn2y/" class="ctag ctag-5 ctag-SsOOifdn2y" aria-label="">macro</a>
+                    
+                  </div>
+                  <div class="clear"></div>
+                </section>
+              </div>
+
+              <div class="grid-33 tablet-grid-50 mobile-grid-100">
+                <section id="epcl_about-2" class="widget widget_epcl_about underline-effect">
+                  <h4 class="widget-title title white bordered">关于我</h4>
+                  <div class="avatar">
+                    <a href="" class="translate-effect thumb"><span class="fullimage cover" style="background-image: url(https://xusjtuer.github.io/images/avatar.png);"></span></a>
+                  </div>
+                  <div class="info">
+                    <h4 class="title small author-name gradient-effect no-margin"><a href="">童年的琴-博客</a></h4>
+                    <p class="founder">海阔凭鱼跃，天高任鸟飞</p>
+                    <div class="social">
+                      
+                        
+                      
+                        
+                      
+                        
+                      
+                        
+                      
+                        
+                      
+                    </div> 
+                  </div>
+                  <div class="clear"></div>
+                  </section>
+              </div>
+
+            </div>
+            <div class="clear"></div>
+        </div>
+
+        <div class="logo">
+          <a href="https://xusjtuer.github.io"><img src="/media/images/gridea.png" alt=""></a>
+        </div>
+        <p class="published border-effect">
+          ©2019 共 5 篇文章
+          <br/>
+          Theme <a href="https://gridea.dev/" target="_blank">「breek」</a> Powered by <a href="https://gridea.dev/" target="_blank">「Gridea」</a>
+        </p>
+        
+        <a href="javascript:void(0)" id="back-to-top" class="epcl-button dark" style="display:none">
+          <i class="fa fa-arrow"></i>
+        </a>
+    </footer>
+    
+    <div class="clear"></div>
+
+        
+
+      
+    <script src="https://xusjtuer.github.io/media/js/functions-post.js"></script>
+
+    </div>
+    <!-- end: #wrapper -->
+  </body>
+</html>
