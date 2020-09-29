@@ -6,7 +6,7 @@
 
 <title>UE4 泛型蓝图节点的实现及应用实例 | 童年的琴-博客</title>
 
-<link rel="shortcut icon" href="https://xusjtuer.github.io/favicon.ico?v=1601289419311">
+<link rel="shortcut icon" href="https://xusjtuer.github.io/favicon.ico?v=1601381270309">
 
 <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://xusjtuer.github.io/styles/main.css">
@@ -38,17 +38,6 @@
 
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
-	
-	<script>
-	var _hmt = _hmt || [];
-	(function() {
-	  var hm = document.createElement("script");
-	  hm.src = "https://hm.baidu.com/hm.js?762fab8d66e007c3dd8e239a6deba5f1";
-	  var s = document.getElementsByTagName("script")[0]; 
-	  s.parentNode.insertBefore(hm, s);
-	})();
-	</script>
-
 </head>
 <body>
 <div class="main gt-bg-theme-color-first">
@@ -59,6 +48,7 @@
             童年的琴-博客
         </div>
     </div>
+    
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
@@ -108,7 +98,7 @@
             
         </div>
         <div style="text-align: center">
-            <form id="gridea-search-form" style="position: relative" data-update="1601289419311" action="/search/index.html">
+            <form id="gridea-search-form" style="position: relative" data-update="1601381270309" action="/search/index.html">
                 <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
                 <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
             </form>
@@ -124,7 +114,7 @@
                 </h2>
                 <div class="post-info">
                     <time class="post-time gt-c-content-color-first">
-                        · 2020-06-14 ·
+                        · 2020/06/14 ·
                     </time>
                     
                         <a href="https://xusjtuer.github.io/tag/l7UgE4BWu/" class="post-tags">
@@ -140,6 +130,9 @@
                         </a>
                     
                 </div>
+                
+                    <img class="post-feature-image" src="https://xusjtuer.github.io/post-images/ue4-post3_generic_get_set_object_property.jpg" alt="">
+                
                 <div class="post-content">
                     <h1 id="1-overview">1. Overview</h1>
 <p>本教程旨在讲解使用ue4 UFUNCTION说明符（Specifier）自定义泛型蓝图节点，实现UObject的任意类型属性（UProperty）GET/SET方法。如下四个泛型蓝图节点，依据UObject对象的PropertyName，GET/SET属性值，适用于v4.25之前版本。<br>
@@ -286,7 +279,7 @@ DECLARE_FUNCTION(execFunctionName)
 <p>其中，<code>CustomStructureParam = &quot;Variable&quot;</code>标识变量Variable为<code>wildcard</code>类型参数，<code>“const int32&amp; Variable”</code>并非表示Variable变量类型为const int32，该参数在此处相当于一个占位符，const + &amp; 指示该参数为输入参数；当然将int32替换成其他类型，也可以编译成功，此处为了与源代码保持一致。编译完成之后，可以在蓝图系统中找到如下节点：<br>
 <img src="https://xusjtuer.github.io/post-images/1601103530448.jpg" alt="" loading="lazy"></p>
 <center style="font-size:10px;color:#C0C0C0;text-decoration:none">图5. 泛型蓝图节点示例；</center> <br />
-<h1 id="5-approach"><strong>5. Approach</strong></h1>
+<h1 id="5-approach">5. Approach</h1>
 <p>以UBlueprintFunctionLibrary为基类，创建C++类，头文件（.h）</p>
 <p>(附：为了减少文章中的显示长度（知乎代码块不支持折叠），以下仅列举其中一个蓝图节点实现代码，完整代码见：<a href="https://link.zhihu.com/?target=https%3A//github.com/xusjtuer/NoteUE4">https://github.com/xusjtuer/NoteUE4</a>)</p>
 <p>//（1）声明泛型函数，在蓝图系统中产生了一个带Wildcard参数的蓝图节点（.h文件）：</p>
@@ -350,11 +343,20 @@ static void Generic_AccessPropertyByName(UObject* OwnerObject, FName PropertyNam
 	UE_LOG(LogParserPropertyLibrary, Warning, TEXT(&quot;UParserPropertyLibrary::Generic_AccessPropertyByName: Failed to find %s variable from %s object&quot;), *PropertyName.ToString(), *UKismetSystemLibrary::GetDisplayName(OwnerObject));
 }
 </code></pre>
-<h2 id="6-conclusion"><strong>6. Conclusion</strong></h2>
+<h1 id="6-conclusion">6. Conclusion</h1>
 <p>本文主要介绍了自定义泛型蓝图节点的实现以及它的应用实例，实现了对UObject对象的任意属性的GET/SET方法，依据PropertyName，GET/SET UObject对象的属性UProperty。拓展：（1）将<code>bSetter</code>参数替换成<strong>操作符</strong>枚举，可以进一步扩充该泛型蓝图节点的应用，感兴趣的可以自己尝试。（2）是否可以将四个节点合并成一个节点。</p>
 
                 </div>
             </article>
+            <div class="toc-container"><ul class="markdownIt-TOC">
+<li><a href="#1-overview">1. Overview</a></li>
+<li><a href="#2-introduction">2. Introduction</a></li>
+<li><a href="#3-required-knowledge">3. Required Knowledge</a></li>
+<li><a href="#4-why">4. Why</a></li>
+<li><a href="#5-approach">5. Approach</a></li>
+<li><a href="#6-conclusion">6. Conclusion</a></li>
+</ul>
+</div>
         </div>
 
         
@@ -448,10 +450,6 @@ static void Generic_AccessPropertyByName(UObject* OwnerObject, FName PropertyNam
     <div class="footer-info">
         Powered by <a href="https://github.com/xusjtuer" target="_blank">xusjtuer</a>
     </div>
-    <div>
-        Theme by <a href="https://imhanjie.com/" target="_blank">imhanjie</a>, Powered by <a
-                href="https://github.com/getgridea/gridea" target="_blank">Gridea | <a href="https://xusjtuer.github.io/atom.xml" target="_blank">RSS</a></a>
-    </div>
 </div>
 
 <script>
@@ -460,20 +458,15 @@ static void Generic_AccessPropertyByName(UObject* OwnerObject, FName PropertyNam
 
     </div>
 </div>
-
-    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-	<span id="busuanzi_container_site_pv">
-		<sup style="color:grey">总访问量<span id="busuanzi_value_site_pv"></span>次</sup>
-	</span>
-	<sup><span style="color:grey" class="post-meta-divider">|</span></sup>
-	<span id="busuanzi_container_site_uv">
-		<sup style="color:grey">访问人数<span id="busuanzi_value_site_uv" ></span>位</sup>
-	</span>
-	<sup><span style="color:grey" class="post-meta-divider">|</span></sup>
-	<span id="/ue4-post3_generic_get_set_object_property/" class="leancloud_visitors" data-flag-title="UE4 泛型蓝图节点的实现及应用实例">
-		<sup style="color:grey" class="post-meta-item-text">阅读量</sup>
-		<sup style="color:grey" class="leancloud-visitors-count"></sup>
-	</span>
-
+<script>
+    "use strict";!function(){for(var n=document.getElementsByTagName("pre"),e=n.length,s=0;s<e;s++){for(var a=n[s].innerHTML.split(/\n/).length,r=0;r<a-1;r++){n[s].getElementsByTagName("span")[0].innerHTML+="<span>"+(r+1)+"</span>"}}}();
+    let mainNavLinks=document.querySelectorAll(".markdownIt-TOC a");window.addEventListener("scroll",event=>{let fromTop=window.scrollY;mainNavLinks.forEach((link,index)=>{let section=document.getElementById(decodeURI(link.hash).substring(1));let nextSection=null
+    if(mainNavLinks[index+1]){nextSection=document.getElementById(decodeURI(mainNavLinks[index+1].hash).substring(1));}
+    if(section.offsetTop<=fromTop){if(nextSection){if(nextSection.offsetTop>fromTop){link.classList.add("currentToc");}else{link.classList.remove("currentToc");}}else{link.classList.add("currentToc");}}else{link.classList.remove("currentToc");}});});
+    var list=document.querySelectorAll(".katex");for(var i=0;i<list.length;i++){list[i].style.display="unset"};
+    var h=document.documentElement,b=document.body,st="scrollTop",sh="scrollHeight",progress=document.querySelector(".progress"),scroll;document.addEventListener("scroll",function(){scroll=(h[st]||b[st])/((h[sh]||b[sh])-h.clientHeight)*100;progress.style.setProperty("--scroll",scroll+"%")});
+    var wxScale=new WxScale({fullPage:document.querySelector("#fullPage"),canvas:document.querySelector("#canvas")});var imgBox=document.querySelectorAll("#md_block img");for(var i=0;i<imgBox.length;i++){imgBox[i].onclick=function(e){wxScale.start(this)}};
+    content="本文最后更新于2020/06/14，已超过 1 年没有更新，涉及的内容可能已经失效！";var date1="2020-06-14 14:39:11";date1=date1.replace("-","/");var date2=new Date();var date3=date2.getTime()-new Date(date1).getTime();var days=Math.floor(date3/(24*3600*1000));if(days>=365){document.getElementById("warn").innerHTML=content};
+    </script>
 </body>
 </html>

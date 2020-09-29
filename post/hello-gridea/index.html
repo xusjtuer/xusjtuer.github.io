@@ -6,7 +6,7 @@
 
 <title>Hello Gridea | 童年的琴-博客</title>
 
-<link rel="shortcut icon" href="https://xusjtuer.github.io/favicon.ico?v=1601289419311">
+<link rel="shortcut icon" href="https://xusjtuer.github.io/favicon.ico?v=1601381270309">
 
 <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://xusjtuer.github.io/styles/main.css">
@@ -38,17 +38,6 @@
 
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
-	
-	<script>
-	var _hmt = _hmt || [];
-	(function() {
-	  var hm = document.createElement("script");
-	  hm.src = "https://hm.baidu.com/hm.js?762fab8d66e007c3dd8e239a6deba5f1";
-	  var s = document.getElementsByTagName("script")[0]; 
-	  s.parentNode.insertBefore(hm, s);
-	})();
-	</script>
-
 </head>
 <body>
 <div class="main gt-bg-theme-color-first">
@@ -59,6 +48,7 @@
             童年的琴-博客
         </div>
     </div>
+    
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
@@ -108,7 +98,7 @@
             
         </div>
         <div style="text-align: center">
-            <form id="gridea-search-form" style="position: relative" data-update="1601289419311" action="/search/index.html">
+            <form id="gridea-search-form" style="position: relative" data-update="1601381270309" action="/search/index.html">
                 <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
                 <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
             </form>
@@ -124,7 +114,7 @@
                 </h2>
                 <div class="post-info">
                     <time class="post-time gt-c-content-color-first">
-                        · 2018-12-12 ·
+                        · 2018/12/12 ·
                     </time>
                     
                         <a href="https://xusjtuer.github.io/tag/WO7FahIja/" class="post-tags">
@@ -132,6 +122,9 @@
                         </a>
                     
                 </div>
+                
+                    <img class="post-feature-image" src="https://xusjtuer.github.io/post-images/hello-gridea.png" alt="">
+                
                 <div class="post-content">
                     <p>👏  欢迎使用 <strong>Gridea</strong> ！<br>
 ✍️  <strong>Gridea</strong> 一个静态博客写作客户端。你可以用它来记录你的生活、心情、知识、笔记、创意... ...</p>
@@ -157,6 +150,14 @@
 
                 </div>
             </article>
+            <div class="toc-container"><ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#%E7%89%B9%E6%80%A7">特性👇</a></li>
+</ul>
+</li>
+</ul>
+</div>
         </div>
 
         
@@ -243,10 +244,6 @@
     <div class="footer-info">
         Powered by <a href="https://github.com/xusjtuer" target="_blank">xusjtuer</a>
     </div>
-    <div>
-        Theme by <a href="https://imhanjie.com/" target="_blank">imhanjie</a>, Powered by <a
-                href="https://github.com/getgridea/gridea" target="_blank">Gridea | <a href="https://xusjtuer.github.io/atom.xml" target="_blank">RSS</a></a>
-    </div>
 </div>
 
 <script>
@@ -255,20 +252,15 @@
 
     </div>
 </div>
-
-    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-	<span id="busuanzi_container_site_pv">
-		<sup style="color:grey">总访问量<span id="busuanzi_value_site_pv"></span>次</sup>
-	</span>
-	<sup><span style="color:grey" class="post-meta-divider">|</span></sup>
-	<span id="busuanzi_container_site_uv">
-		<sup style="color:grey">访问人数<span id="busuanzi_value_site_uv" ></span>位</sup>
-	</span>
-	<sup><span style="color:grey" class="post-meta-divider">|</span></sup>
-	<span id="/hello-gridea/" class="leancloud_visitors" data-flag-title="Hello Gridea">
-		<sup style="color:grey" class="post-meta-item-text">阅读量</sup>
-		<sup style="color:grey" class="leancloud-visitors-count"></sup>
-	</span>
-
+<script>
+    "use strict";!function(){for(var n=document.getElementsByTagName("pre"),e=n.length,s=0;s<e;s++){for(var a=n[s].innerHTML.split(/\n/).length,r=0;r<a-1;r++){n[s].getElementsByTagName("span")[0].innerHTML+="<span>"+(r+1)+"</span>"}}}();
+    let mainNavLinks=document.querySelectorAll(".markdownIt-TOC a");window.addEventListener("scroll",event=>{let fromTop=window.scrollY;mainNavLinks.forEach((link,index)=>{let section=document.getElementById(decodeURI(link.hash).substring(1));let nextSection=null
+    if(mainNavLinks[index+1]){nextSection=document.getElementById(decodeURI(mainNavLinks[index+1].hash).substring(1));}
+    if(section.offsetTop<=fromTop){if(nextSection){if(nextSection.offsetTop>fromTop){link.classList.add("currentToc");}else{link.classList.remove("currentToc");}}else{link.classList.add("currentToc");}}else{link.classList.remove("currentToc");}});});
+    var list=document.querySelectorAll(".katex");for(var i=0;i<list.length;i++){list[i].style.display="unset"};
+    var h=document.documentElement,b=document.body,st="scrollTop",sh="scrollHeight",progress=document.querySelector(".progress"),scroll;document.addEventListener("scroll",function(){scroll=(h[st]||b[st])/((h[sh]||b[sh])-h.clientHeight)*100;progress.style.setProperty("--scroll",scroll+"%")});
+    var wxScale=new WxScale({fullPage:document.querySelector("#fullPage"),canvas:document.querySelector("#canvas")});var imgBox=document.querySelectorAll("#md_block img");for(var i=0;i<imgBox.length;i++){imgBox[i].onclick=function(e){wxScale.start(this)}};
+    content="本文最后更新于2018/12/12，已超过 1 年没有更新，涉及的内容可能已经失效！";var date1="2018-12-12 00:00:00";date1=date1.replace("-","/");var date2=new Date();var date3=date2.getTime()-new Date(date1).getTime();var days=Math.floor(date3/(24*3600*1000));if(days>=365){document.getElementById("warn").innerHTML=content};
+    </script>
 </body>
 </html>

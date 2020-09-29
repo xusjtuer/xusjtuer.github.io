@@ -6,7 +6,7 @@
 
 <title>UE4 动态读写DataTable数据表 | 童年的琴-博客</title>
 
-<link rel="shortcut icon" href="https://xusjtuer.github.io/favicon.ico?v=1601289419311">
+<link rel="shortcut icon" href="https://xusjtuer.github.io/favicon.ico?v=1601381270309">
 
 <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://xusjtuer.github.io/styles/main.css">
@@ -38,17 +38,6 @@
 
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
-	
-	<script>
-	var _hmt = _hmt || [];
-	(function() {
-	  var hm = document.createElement("script");
-	  hm.src = "https://hm.baidu.com/hm.js?762fab8d66e007c3dd8e239a6deba5f1";
-	  var s = document.getElementsByTagName("script")[0]; 
-	  s.parentNode.insertBefore(hm, s);
-	})();
-	</script>
-
 </head>
 <body>
 <div class="main gt-bg-theme-color-first">
@@ -59,6 +48,7 @@
             童年的琴-博客
         </div>
     </div>
+    
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
@@ -108,7 +98,7 @@
             
         </div>
         <div style="text-align: center">
-            <form id="gridea-search-form" style="position: relative" data-update="1601289419311" action="/search/index.html">
+            <form id="gridea-search-form" style="position: relative" data-update="1601381270309" action="/search/index.html">
                 <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
                 <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
             </form>
@@ -124,7 +114,7 @@
                 </h2>
                 <div class="post-info">
                     <time class="post-time gt-c-content-color-first">
-                        · 2020-07-11 ·
+                        · 2020/07/11 ·
                     </time>
                     
                         <a href="https://xusjtuer.github.io/tag/MksDbrf4G/" class="post-tags">
@@ -144,6 +134,9 @@
                         </a>
                     
                 </div>
+                
+                    <img class="post-feature-image" src="https://xusjtuer.github.io/post-images/ue4-post6_dynamic_read_write_datatable.jpg" alt="">
+                
                 <div class="post-content">
                     <h1 id="1-overview">1. Overview</h1>
 <p>DataTable数据表在UE4中是一类重要的资产(Asset)，截至ue4 v4.25版本，引擎内置的函数并不支持运行时(Runtime)修改DataTable表，所以写下本教程，讲解如何在ue4中实现动态修改DataTable数据表。如下图所示函数，由于其功能和ue4内置的DataTable编辑脚本(EditorScript)相同，所以仿照源码取了相同的函数名称，但以下蓝图节点在打包之后仍然可以调用。<br>
@@ -187,7 +180,7 @@
 #endif //WITH_EDITOR
 </code></pre>
 <center style="font-size:10px;color:#C0C0C0;text-decoration:none"> DataTableFunctionLibrary类的Editor Script写入DataTable；</center> <br />
-<h1 id="3-why"><strong>3. Why</strong></h1>
+<h1 id="3-why">3. Why</h1>
 <p>首先想要简要叙述以下二个问题：</p>
 <p><strong>(1) 为什么需要动态读写DataTable？</strong></p>
 <p>最大的好处是便于修改，打包之后可修改DataTable数据表中的数据，无需重复打包。目前引擎默认的功能中DataTable只允许在编辑器中编辑，或者在编辑时导入相同格式的CSV文件/JSON文件，这些功能在项目打包之后都是无法使用的；所以一般情况下，在修改DataTable中的数据之后，只能重新打包项目，费时费力。要想避免此类重复打包，实现动态读写DataTable就意义非凡了。</p>
@@ -458,6 +451,15 @@ void UGenericMiscLibrary::GetDataTableAsCSVFile(UDataTable* DataTable, const FSt
 
                 </div>
             </article>
+            <div class="toc-container"><ul class="markdownIt-TOC">
+<li><a href="#1-overview">1. Overview</a></li>
+<li><a href="#2-introduction">2. Introduction</a></li>
+<li><a href="#3-why">3. Why</a></li>
+<li><a href="#4-approach">4. Approach</a></li>
+<li><a href="#5-usage">5. Usage</a></li>
+<li><a href="#6-conclusion">6. Conclusion</a></li>
+</ul>
+</div>
         </div>
 
         
@@ -551,10 +553,6 @@ void UGenericMiscLibrary::GetDataTableAsCSVFile(UDataTable* DataTable, const FSt
     <div class="footer-info">
         Powered by <a href="https://github.com/xusjtuer" target="_blank">xusjtuer</a>
     </div>
-    <div>
-        Theme by <a href="https://imhanjie.com/" target="_blank">imhanjie</a>, Powered by <a
-                href="https://github.com/getgridea/gridea" target="_blank">Gridea | <a href="https://xusjtuer.github.io/atom.xml" target="_blank">RSS</a></a>
-    </div>
 </div>
 
 <script>
@@ -563,20 +561,15 @@ void UGenericMiscLibrary::GetDataTableAsCSVFile(UDataTable* DataTable, const FSt
 
     </div>
 </div>
-
-    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-	<span id="busuanzi_container_site_pv">
-		<sup style="color:grey">总访问量<span id="busuanzi_value_site_pv"></span>次</sup>
-	</span>
-	<sup><span style="color:grey" class="post-meta-divider">|</span></sup>
-	<span id="busuanzi_container_site_uv">
-		<sup style="color:grey">访问人数<span id="busuanzi_value_site_uv" ></span>位</sup>
-	</span>
-	<sup><span style="color:grey" class="post-meta-divider">|</span></sup>
-	<span id="/ue4-post6_dynamic_read_write_datatable/" class="leancloud_visitors" data-flag-title="UE4 动态读写DataTable数据表">
-		<sup style="color:grey" class="post-meta-item-text">阅读量</sup>
-		<sup style="color:grey" class="leancloud-visitors-count"></sup>
-	</span>
-
+<script>
+    "use strict";!function(){for(var n=document.getElementsByTagName("pre"),e=n.length,s=0;s<e;s++){for(var a=n[s].innerHTML.split(/\n/).length,r=0;r<a-1;r++){n[s].getElementsByTagName("span")[0].innerHTML+="<span>"+(r+1)+"</span>"}}}();
+    let mainNavLinks=document.querySelectorAll(".markdownIt-TOC a");window.addEventListener("scroll",event=>{let fromTop=window.scrollY;mainNavLinks.forEach((link,index)=>{let section=document.getElementById(decodeURI(link.hash).substring(1));let nextSection=null
+    if(mainNavLinks[index+1]){nextSection=document.getElementById(decodeURI(mainNavLinks[index+1].hash).substring(1));}
+    if(section.offsetTop<=fromTop){if(nextSection){if(nextSection.offsetTop>fromTop){link.classList.add("currentToc");}else{link.classList.remove("currentToc");}}else{link.classList.add("currentToc");}}else{link.classList.remove("currentToc");}});});
+    var list=document.querySelectorAll(".katex");for(var i=0;i<list.length;i++){list[i].style.display="unset"};
+    var h=document.documentElement,b=document.body,st="scrollTop",sh="scrollHeight",progress=document.querySelector(".progress"),scroll;document.addEventListener("scroll",function(){scroll=(h[st]||b[st])/((h[sh]||b[sh])-h.clientHeight)*100;progress.style.setProperty("--scroll",scroll+"%")});
+    var wxScale=new WxScale({fullPage:document.querySelector("#fullPage"),canvas:document.querySelector("#canvas")});var imgBox=document.querySelectorAll("#md_block img");for(var i=0;i<imgBox.length;i++){imgBox[i].onclick=function(e){wxScale.start(this)}};
+    content="本文最后更新于2020/07/11，已超过 1 年没有更新，涉及的内容可能已经失效！";var date1="2020-07-11 16:50:50";date1=date1.replace("-","/");var date2=new Date();var date3=date2.getTime()-new Date(date1).getTime();var days=Math.floor(date3/(24*3600*1000));if(days>=365){document.getElementById("warn").innerHTML=content};
+    </script>
 </body>
 </html>

@@ -6,7 +6,7 @@
 
 <title>UE4 C++实现任意类型数组蓝图排序节点（Quick Sort） | 童年的琴-博客</title>
 
-<link rel="shortcut icon" href="https://xusjtuer.github.io/favicon.ico?v=1601289419311">
+<link rel="shortcut icon" href="https://xusjtuer.github.io/favicon.ico?v=1601381270309">
 
 <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://xusjtuer.github.io/styles/main.css">
@@ -38,17 +38,6 @@
 
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
-	
-	<script>
-	var _hmt = _hmt || [];
-	(function() {
-	  var hm = document.createElement("script");
-	  hm.src = "https://hm.baidu.com/hm.js?762fab8d66e007c3dd8e239a6deba5f1";
-	  var s = document.getElementsByTagName("script")[0]; 
-	  s.parentNode.insertBefore(hm, s);
-	})();
-	</script>
-
 </head>
 <body>
 <div class="main gt-bg-theme-color-first">
@@ -59,6 +48,7 @@
             童年的琴-博客
         </div>
     </div>
+    
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
@@ -108,7 +98,7 @@
             
         </div>
         <div style="text-align: center">
-            <form id="gridea-search-form" style="position: relative" data-update="1601289419311" action="/search/index.html">
+            <form id="gridea-search-form" style="position: relative" data-update="1601381270309" action="/search/index.html">
                 <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
                 <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
             </form>
@@ -124,7 +114,7 @@
                 </h2>
                 <div class="post-info">
                     <time class="post-time gt-c-content-color-first">
-                        · 2020-05-31 ·
+                        · 2020/05/31 ·
                     </time>
                     
                         <a href="https://xusjtuer.github.io/tag/chYkJdpez/" class="post-tags">
@@ -144,6 +134,9 @@
                         </a>
                     
                 </div>
+                
+                    <img class="post-feature-image" src="https://xusjtuer.github.io/post-images/ue4-post2_generic_array_quick_sort.jpg" alt="">
+                
                 <div class="post-content">
                     <h2 id="1-overview">1. Overview</h2>
 <p>本教程旨在讲解在虚幻引擎(UE4) C++中实现蓝图(Blueprint)可调用的任意类型数组排序的蓝图节点。纯蓝图方法实现任意类型数组排序方法，请查看上一期 <a href="https://xusjtuer.github.io/post/ue4-dong-tai-du-xie-datatable-shu-ju-biao/">UE4 蓝图实现任意类型数组排序</a>。以下泛型数组排序节点Array_Sort基于快速排序算法（Quick Sort）原理，冒泡排序（Bubble Sort）版见知乎链接：<a href="https://zhuanlan.zhihu.com/p/144880580">第2期 UE4 C++实现任意类型数组蓝图排序节点</a>。编者水平有限，如有错漏敬请谅解。</p>
@@ -152,7 +145,7 @@
 本文主要讲解UE4 C++泛型数组的快速排序蓝图节点的实现方法，以及该泛型快排节点与STL 排序方法的比较。</p>
 <h2 id="3-sort-approach">3. Sort Approach</h2>
 <h3 id="31-基于sortby-function实现泛型数组排序">3.1 基于SortBy Function，实现泛型数组排序</h3>
-<h4 id="1-h文件array_sort函数声明">(1) h文件，Array_Sort函数声明：</h4>
+<p>(1) h文件，Array_Sort函数声明：</p>
 <pre><code class="language-c++">	/** Generic sort array by function using quick sort algorithm.
 	*
 	*	@param	Array	Target array to sort
@@ -173,7 +166,7 @@
 	// Check that the CompareBy function is appropriate
 	static bool IsSuitableFunction(UFunction* ComparedBy, UArrayProperty* ArrayProp);
 </code></pre>
-<h4 id="2-h文件array_sortv1函数的自定义customthunk函数体">(2) h文件，Array_SortV1函数的自定义CustomThunk函数体</h4>
+<p>(2) h文件，Array_SortV1函数的自定义CustomThunk函数体</p>
 <pre><code class="language-c++">	// sort array by function name
 	DECLARE_FUNCTION(execArray_SortV1)
 	{
@@ -206,7 +199,7 @@
 		P_NATIVE_END;
 	}
 </code></pre>
-<h4 id="3-cpp文件genericarray_sortbyfunction函数体">(3) cpp文件，GenericArray_SortByFunction()函数体</h4>
+<p>(3) cpp文件，GenericArray_SortByFunction()函数体</p>
 <pre><code class="language-c++">void UGenericArrayLibrary::GenericArray_SortByFunction(UObject* OwnerObject, UFunction* ComparedBy, void* TargetArray, UArrayProperty* ArrayProp)
 {
 	if (!ComparedBy || !OwnerObject || !TargetArray)
@@ -237,7 +230,7 @@
 <pre><code class="language-c++">	// Optimal
 	UKismetArrayLibrary::GenericArray_Shuffle(TargetArray, ArrayProp);
 </code></pre>
-<h4 id="4-cpp文件快排递归循环">(4) cpp文件，快排递归循环</h4>
+<p>(4) cpp文件，快排递归循环</p>
 <pre><code class="language-c++">void UGenericArrayLibrary::QuickSortByFunction_Recursive(UObject* OwnerObject, UFunction* ComparedBy, UProperty* InnerProp, FScriptArrayHelper&amp; ArrayHelper, int32 Low, int32 High)
 {
 	if (Low &lt; High)
@@ -248,7 +241,7 @@
 	}
 }
 </code></pre>
-<h4 id="5-cpp文件快排拆分">(5) cpp文件，快排拆分</h4>
+<p>(5) cpp文件，快排拆分</p>
 <pre><code class="language-c++">int32 UGenericArrayLibrary::QuickSortByFunction_Partition(UObject* OwnerObject, UFunction* ComparedBy, UProperty* InnerProp, FScriptArrayHelper&amp; ArrayHelper, int32 Low, int32 High)
 {
 	const int32 PropertySize = InnerProp-&gt;ElementSize * InnerProp-&gt;ArrayDim;
@@ -280,7 +273,7 @@
 	return i + 1;
 }
 </code></pre>
-<h4 id="6-cpp文件判断用于比较数组元素大小的蓝图函数是否合乎要求">(6) cpp文件，判断用于比较数组元素大小的蓝图函数是否合乎要求</h4>
+<p>(6) cpp文件，判断用于比较数组元素大小的蓝图函数是否合乎要求</p>
 <pre><code class="language-c++">bool UGenericArrayLibrary::IsSuitableFunction(UFunction* ComparedBy, UArrayProperty* ArrayProp)
 {
 	// check CompareBy function's parameter number
@@ -317,7 +310,7 @@
 }
 </code></pre>
 <h3 id="32-基于sortby-property实现泛型数组排序">3.2 基于SortBy Property，实现泛型数组排序</h3>
-<h4 id="1-h文件array_sort函数声明-2">(1) h文件，Array_Sort函数声明：</h4>
+<p>(1) h文件，Array_Sort函数声明：</p>
 <pre><code class="language-c++">	/** Generic sort array by property using quick sort algorithm.
 	*
 	*	@param	Array	Target array to sort
@@ -337,7 +330,7 @@
 	// generic compare two element of array by property
 	static bool GenericComparePropertyValue(FScriptArrayHelper&amp; ArrayHelper, UProperty* InnerProp, UProperty* SortProp, int32 j, int32 High, bool bAscending);
 </code></pre>
-<h4 id="2-h文件array_sortv2函数的自定义customthunk函数体">(2) h文件，Array_SortV2函数的自定义CustomThunk函数体</h4>
+<p>(2) h文件，Array_SortV2函数的自定义CustomThunk函数体</p>
 <pre><code class="language-c++">	// sort array by property
 	DECLARE_FUNCTION(execArray_SortV2)
 	{
@@ -359,7 +352,7 @@
 		P_NATIVE_END;
 	}
 </code></pre>
-<h4 id="3-cpp文件genericarray_sortv2函数体">(3) cpp文件，GenericArray_SortV2()函数体</h4>
+<p>(3) cpp文件，GenericArray_SortV2()函数体</p>
 <pre><code class="language-c++">void UGenericArrayLibrary::GenericArray_SortV2(void* TargetArray, UArrayProperty* ArrayProp, FName PropertyName, bool bAscending)
 {
 	if (!TargetArray)
@@ -394,7 +387,7 @@
 	}
 }
 </code></pre>
-<h4 id="4-cpp文件快排递归循环-2">(4) cpp文件，快排递归循环</h4>
+<p>(4) cpp文件，快排递归循环</p>
 <pre><code class="language-c++">void UGenericArrayLibrary::QuickSort_RecursiveByProperty(FScriptArrayHelper&amp; ArrayHelper, UProperty* InnerProp, UProperty* SortProp, int32 Low, int32 High, bool bAscending)
 {
 	if (Low &lt; High)
@@ -407,7 +400,7 @@
 }
 
 </code></pre>
-<h4 id="5-cpp文件快排拆分-2">(5) cpp文件，快排拆分</h4>
+<p>(5) cpp文件，快排拆分</p>
 <pre><code class="language-c++">int32 UGenericArrayLibrary::QuickSort_PartitionByProperty(FScriptArrayHelper&amp; ArrayHelper, UProperty* InnerProp, UProperty* SortProp, int32 Low, int32 High, bool bAscending)
 {
 	int32 i = Low - 1;
@@ -424,7 +417,7 @@
 	return i + 1;
 }
 </code></pre>
-<h4 id="6-cpp文件比较数组中下标为j和high的成员大小">(6) cpp文件，比较数组中下标为j和High的成员大小</h4>
+<p>(6) cpp文件，比较数组中下标为j和High的成员大小</p>
 <pre><code class="language-c++">bool UGenericArrayLibrary::GenericComparePropertyValue(FScriptArrayHelper&amp; ArrayHelper, UProperty* InnerProp, UProperty* SortProp, int32 j, int32 High, bool bAscending)
 {
 	bool bResult = false;
@@ -475,7 +468,7 @@
 	return bResult == bAscending;
 }
 </code></pre>
-<h4 id="7为了使array_sort节点适用bp-ustruct-蓝图结构体数组将内置的findfield函数做了部分修改">（7）为了使Array_Sort节点适用BP UStruct (蓝图结构体)数组，将内置的FindField()函数做了部分修改。</h4>
+<p>（7）为了使Array_Sort节点适用BP UStruct (蓝图结构体)数组，将内置的FindField()函数做了部分修改。</p>
 <pre><code class="language-c++">namespace SortAlgorithm
 {
 
@@ -567,6 +560,23 @@
 
                 </div>
             </article>
+            <div class="toc-container"><ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#1-overview">1. Overview</a></li>
+<li><a href="#2-introduction">2.  Introduction</a></li>
+<li><a href="#3-sort-approach">3. Sort Approach</a>
+<ul>
+<li><a href="#31-%E5%9F%BA%E4%BA%8Esortby-function%E5%AE%9E%E7%8E%B0%E6%B3%9B%E5%9E%8B%E6%95%B0%E7%BB%84%E6%8E%92%E5%BA%8F">3.1 基于SortBy Function，实现泛型数组排序</a></li>
+<li><a href="#32-%E5%9F%BA%E4%BA%8Esortby-property%E5%AE%9E%E7%8E%B0%E6%B3%9B%E5%9E%8B%E6%95%B0%E7%BB%84%E6%8E%92%E5%BA%8F">3.2 基于SortBy Property，实现泛型数组排序</a></li>
+</ul>
+</li>
+<li><a href="#4-usage">4. Usage</a></li>
+<li><a href="#5-conclusion">5. Conclusion</a></li>
+</ul>
+</li>
+</ul>
+</div>
         </div>
 
         
@@ -660,10 +670,6 @@
     <div class="footer-info">
         Powered by <a href="https://github.com/xusjtuer" target="_blank">xusjtuer</a>
     </div>
-    <div>
-        Theme by <a href="https://imhanjie.com/" target="_blank">imhanjie</a>, Powered by <a
-                href="https://github.com/getgridea/gridea" target="_blank">Gridea | <a href="https://xusjtuer.github.io/atom.xml" target="_blank">RSS</a></a>
-    </div>
 </div>
 
 <script>
@@ -672,20 +678,15 @@
 
     </div>
 </div>
-
-    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-	<span id="busuanzi_container_site_pv">
-		<sup style="color:grey">总访问量<span id="busuanzi_value_site_pv"></span>次</sup>
-	</span>
-	<sup><span style="color:grey" class="post-meta-divider">|</span></sup>
-	<span id="busuanzi_container_site_uv">
-		<sup style="color:grey">访问人数<span id="busuanzi_value_site_uv" ></span>位</sup>
-	</span>
-	<sup><span style="color:grey" class="post-meta-divider">|</span></sup>
-	<span id="/ue4-post2_generic_array_quick_sort/" class="leancloud_visitors" data-flag-title="UE4 C++实现任意类型数组蓝图排序节点（Quick Sort）">
-		<sup style="color:grey" class="post-meta-item-text">阅读量</sup>
-		<sup style="color:grey" class="leancloud-visitors-count"></sup>
-	</span>
-
+<script>
+    "use strict";!function(){for(var n=document.getElementsByTagName("pre"),e=n.length,s=0;s<e;s++){for(var a=n[s].innerHTML.split(/\n/).length,r=0;r<a-1;r++){n[s].getElementsByTagName("span")[0].innerHTML+="<span>"+(r+1)+"</span>"}}}();
+    let mainNavLinks=document.querySelectorAll(".markdownIt-TOC a");window.addEventListener("scroll",event=>{let fromTop=window.scrollY;mainNavLinks.forEach((link,index)=>{let section=document.getElementById(decodeURI(link.hash).substring(1));let nextSection=null
+    if(mainNavLinks[index+1]){nextSection=document.getElementById(decodeURI(mainNavLinks[index+1].hash).substring(1));}
+    if(section.offsetTop<=fromTop){if(nextSection){if(nextSection.offsetTop>fromTop){link.classList.add("currentToc");}else{link.classList.remove("currentToc");}}else{link.classList.add("currentToc");}}else{link.classList.remove("currentToc");}});});
+    var list=document.querySelectorAll(".katex");for(var i=0;i<list.length;i++){list[i].style.display="unset"};
+    var h=document.documentElement,b=document.body,st="scrollTop",sh="scrollHeight",progress=document.querySelector(".progress"),scroll;document.addEventListener("scroll",function(){scroll=(h[st]||b[st])/((h[sh]||b[sh])-h.clientHeight)*100;progress.style.setProperty("--scroll",scroll+"%")});
+    var wxScale=new WxScale({fullPage:document.querySelector("#fullPage"),canvas:document.querySelector("#canvas")});var imgBox=document.querySelectorAll("#md_block img");for(var i=0;i<imgBox.length;i++){imgBox[i].onclick=function(e){wxScale.start(this)}};
+    content="本文最后更新于2020/05/31，已超过 1 年没有更新，涉及的内容可能已经失效！";var date1="2020-05-31 19:32:43";date1=date1.replace("-","/");var date2=new Date();var date3=date2.getTime()-new Date(date1).getTime();var days=Math.floor(date3/(24*3600*1000));if(days>=365){document.getElementById("warn").innerHTML=content};
+    </script>
 </body>
 </html>

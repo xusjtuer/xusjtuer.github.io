@@ -471,6 +471,11 @@ ul li {
   display: flex;
   flex-direction: column;
 }
+@media (max-width: 1199px) {
+  .toc-container {
+    display: none;
+  }
+}
 .navbar {
   padding: 38px 96px !important;
 }
@@ -517,11 +522,12 @@ ul li {
     font-size: 21px !important;
     font-weight: bold;
   }
-  .navbar .nav-item {
-    padding: 16px 32px;
+  .navbar .navbar-nav {
+    flex-direction: row;
   }
-  .navbar .nav-item:first-child {
-    margin-top: 35px;
+  .navbar .nav-item {
+    padding: 20px !important;
+    width: 25%;
   }
 }
 .post-list-container {
@@ -589,10 +595,14 @@ ul li {
   flex-basis: 200px;
   flex-shrink: 0;
   margin-left: 20px;
-  border-radius: 2px;
+  border-radius: 4px;
   overflow: hidden;
   background-size: cover;
   background-position: center;
+  display: inline-block;
+}
+.post-list-container .post-inner .post .post-feature-image-mobile {
+  display: none;
 }
 .pagination-container {
   padding: 24px 32px 32px;
@@ -634,12 +644,16 @@ ul li {
     margin-left: 10px;
   }
   .post-list-container .post-inner .post .post-feature-image {
-    width: 0;
-    height: 0;
-    flex-basis: 0;
-    flex-shrink: 0;
-    margin-left: 0;
-    border-radius: 2px;
+    display: none;
+  }
+}
+@media (max-width: 992px) {
+  .post-list-container .post-inner .post .post-feature-image-mobile {
+    display: block;
+    margin-top: 10px;
+    width: 100%;
+    height: 150px;
+    border-radius: 4px;
     overflow: hidden;
     background-size: cover;
     background-position: center;
@@ -657,6 +671,7 @@ ul li {
   padding: 24px 32px;
   width: 1000px;
   border-radius: 4px;
+  position: relative;
 }
 .post-container .post-detail .post-title {
   font-size: 26px;
@@ -674,6 +689,12 @@ ul li {
 }
 .post-container .post-detail .post-content {
   margin-top: 30px;
+}
+.post-container .post-detail .post-feature-image {
+  width: 100%;
+  height: auto;
+  margin-bottom: 24px;
+  border-radius: 2px;
 }
 .next-post {
   text-align: center;
@@ -842,7 +863,10 @@ ul li {
 }
 @media (max-width: 992px) {
   #gridea-search-form .fa-search {
-    visibility: hidden;
+    left: 28px !important;
+  }
+  #gridea-search-form .search-input {
+    width: 90%;
   }
 }
 .searching,
@@ -1820,6 +1844,57 @@ code::-webkit-scrollbar-thumb:hover {
 }
 .katex .mtable .col-align-r > .vlist {
   text-align: right;
+}
+.toc-container {
+  position: absolute;
+  top: 0;
+  left: 100%;
+  height: 100%;
+}
+.toc-container .markdownIt-TOC {
+  position: sticky;
+  top: 32px;
+  width: 250px;
+  font-size: 12px;
+  list-style: none;
+  padding-left: 0;
+}
+.toc-container .markdownIt-TOC:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 8px;
+  bottom: 0;
+  width: 1px;
+  opacity: 0.5;
+}
+.toc-container ul {
+  list-style: none;
+}
+.toc-container ul li {
+  list-style: none;
+}
+.toc-container li {
+  padding-left: 16px;
+}
+.toc-container li a {
+  color: #868e96;
+  padding: 4px;
+  display: block;
+  transition: all 0.3s;
+  font-size: 10px;
+}
+.toc-container li a:hover {
+  background: #efeeee;
+}
+.toc-container li a.current {
+  color: #006cff;
+  background: #efeeee;
+}
+.currentToc {
+  background-color: e7dfdf !important;
+  color: #bd3c3c !important;
+  border-radius: 5px;
 }
 
         .gt-bg-theme-color-first {

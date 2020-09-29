@@ -6,7 +6,7 @@
 
 <title>UE4 异步蓝图节点设计与实现 | 童年的琴-博客</title>
 
-<link rel="shortcut icon" href="https://xusjtuer.github.io/favicon.ico?v=1601289419311">
+<link rel="shortcut icon" href="https://xusjtuer.github.io/favicon.ico?v=1601381270309">
 
 <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://xusjtuer.github.io/styles/main.css">
@@ -38,17 +38,6 @@
 
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
-	
-	<script>
-	var _hmt = _hmt || [];
-	(function() {
-	  var hm = document.createElement("script");
-	  hm.src = "https://hm.baidu.com/hm.js?762fab8d66e007c3dd8e239a6deba5f1";
-	  var s = document.getElementsByTagName("script")[0]; 
-	  s.parentNode.insertBefore(hm, s);
-	})();
-	</script>
-
 </head>
 <body>
 <div class="main gt-bg-theme-color-first">
@@ -59,6 +48,7 @@
             童年的琴-博客
         </div>
     </div>
+    
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
@@ -108,7 +98,7 @@
             
         </div>
         <div style="text-align: center">
-            <form id="gridea-search-form" style="position: relative" data-update="1601289419311" action="/search/index.html">
+            <form id="gridea-search-form" style="position: relative" data-update="1601381270309" action="/search/index.html">
                 <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
                 <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
             </form>
@@ -124,7 +114,7 @@
                 </h2>
                 <div class="post-info">
                     <time class="post-time gt-c-content-color-first">
-                        · 2020-08-16 ·
+                        · 2020/08/16 ·
                     </time>
                     
                         <a href="https://xusjtuer.github.io/tag/2V2Y7FEXB/" class="post-tags">
@@ -144,10 +134,13 @@
                         </a>
                     
                 </div>
+                
+                    <img class="post-feature-image" src="https://xusjtuer.github.io/post-images/ue4-post8_async_bp_node_set_timer.jpg" alt="">
+                
                 <div class="post-content">
                     <p><strong>摘要</strong>：函数的异步调用是编程过程中一种常见的调用方式，虽然虚幻引擎拥有强大的蓝图系统，但是在处理异步调用时，现有的蓝图节点却常常束手无策。本教程旨讲解在ue4中设计并实现异步蓝图节点的全流程，以实现具有计时、可取消延迟Delay、同时处理N个对象的异步调用等多个功能的异步蓝图节点SetTimer为例，逐一解析异蓝图节点从需求、设计、实现、应用各个过程。</p>
 <p><strong>关键字</strong>：虚幻引擎；蓝图；异步；定时器</p>
-<h2 id="design-and-implementation-of-asynchronous-blueprint-node">Design and Implementation of Asynchronous Blueprint Node</h2>
+<p><span style='font-size:32px;'><strong>Design and Implementation of Asynchronous Blueprint Node</strong></span></p>
 <p><strong>Abstract</strong>：Asynchronous calling of functions is a common calling way in the programming process. Although Unreal Engine has a powerful blueprint system, the existing blueprint nodes are often at a loss for handling asynchronous call processes. This tutorial aims to explain the whole process of designing and implementing asynchronous blueprint nodes in ue4.Taking the custom asynchronous blueprint node SetTimer, which has the functions of timing, delay, and asynchronous call of N objects at the same time, as an example. Analyze each process of asynchronous blueprint nodes from requirements, design, implementation, and application one by one.</p>
 <p><strong>Key words</strong>: Unreal Engine; Blueprint; Async; Timer</p>
 <h1 id="1-introduction">1. Introduction</h1>
@@ -480,6 +473,19 @@ AsyncNode-&gt;RegisterWithGameInstance((UObject*)WorldContextObject);
 
                 </div>
             </article>
+            <div class="toc-container"><ul class="markdownIt-TOC">
+<li><a href="#1-introduction">1. Introduction</a></li>
+<li><a href="#2-design">2. Design</a></li>
+<li><a href="#3-source-code">3. Source code</a>
+<ul>
+<li><a href="#h-%E6%96%87%E4%BB%B6">//.h 文件</a></li>
+<li><a href="#cpp-%E6%96%87%E4%BB%B6">//.cpp 文件</a></li>
+</ul>
+</li>
+<li><a href="#4-usage">4. Usage</a></li>
+<li><a href="#5-conclusion">5. Conclusion</a></li>
+</ul>
+</div>
         </div>
 
         
@@ -573,10 +579,6 @@ AsyncNode-&gt;RegisterWithGameInstance((UObject*)WorldContextObject);
     <div class="footer-info">
         Powered by <a href="https://github.com/xusjtuer" target="_blank">xusjtuer</a>
     </div>
-    <div>
-        Theme by <a href="https://imhanjie.com/" target="_blank">imhanjie</a>, Powered by <a
-                href="https://github.com/getgridea/gridea" target="_blank">Gridea | <a href="https://xusjtuer.github.io/atom.xml" target="_blank">RSS</a></a>
-    </div>
 </div>
 
 <script>
@@ -585,20 +587,15 @@ AsyncNode-&gt;RegisterWithGameInstance((UObject*)WorldContextObject);
 
     </div>
 </div>
-
-    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-	<span id="busuanzi_container_site_pv">
-		<sup style="color:grey">总访问量<span id="busuanzi_value_site_pv"></span>次</sup>
-	</span>
-	<sup><span style="color:grey" class="post-meta-divider">|</span></sup>
-	<span id="busuanzi_container_site_uv">
-		<sup style="color:grey">访问人数<span id="busuanzi_value_site_uv" ></span>位</sup>
-	</span>
-	<sup><span style="color:grey" class="post-meta-divider">|</span></sup>
-	<span id="/ue4-post8_async_bp_node_set_timer/" class="leancloud_visitors" data-flag-title="UE4 异步蓝图节点设计与实现">
-		<sup style="color:grey" class="post-meta-item-text">阅读量</sup>
-		<sup style="color:grey" class="leancloud-visitors-count"></sup>
-	</span>
-
+<script>
+    "use strict";!function(){for(var n=document.getElementsByTagName("pre"),e=n.length,s=0;s<e;s++){for(var a=n[s].innerHTML.split(/\n/).length,r=0;r<a-1;r++){n[s].getElementsByTagName("span")[0].innerHTML+="<span>"+(r+1)+"</span>"}}}();
+    let mainNavLinks=document.querySelectorAll(".markdownIt-TOC a");window.addEventListener("scroll",event=>{let fromTop=window.scrollY;mainNavLinks.forEach((link,index)=>{let section=document.getElementById(decodeURI(link.hash).substring(1));let nextSection=null
+    if(mainNavLinks[index+1]){nextSection=document.getElementById(decodeURI(mainNavLinks[index+1].hash).substring(1));}
+    if(section.offsetTop<=fromTop){if(nextSection){if(nextSection.offsetTop>fromTop){link.classList.add("currentToc");}else{link.classList.remove("currentToc");}}else{link.classList.add("currentToc");}}else{link.classList.remove("currentToc");}});});
+    var list=document.querySelectorAll(".katex");for(var i=0;i<list.length;i++){list[i].style.display="unset"};
+    var h=document.documentElement,b=document.body,st="scrollTop",sh="scrollHeight",progress=document.querySelector(".progress"),scroll;document.addEventListener("scroll",function(){scroll=(h[st]||b[st])/((h[sh]||b[sh])-h.clientHeight)*100;progress.style.setProperty("--scroll",scroll+"%")});
+    var wxScale=new WxScale({fullPage:document.querySelector("#fullPage"),canvas:document.querySelector("#canvas")});var imgBox=document.querySelectorAll("#md_block img");for(var i=0;i<imgBox.length;i++){imgBox[i].onclick=function(e){wxScale.start(this)}};
+    content="本文最后更新于2020/08/16，已超过 1 年没有更新，涉及的内容可能已经失效！";var date1="2020-08-16 18:29:09";date1=date1.replace("-","/");var date2=new Date();var date3=date2.getTime()-new Date(date1).getTime();var days=Math.floor(date3/(24*3600*1000));if(days>=365){document.getElementById("warn").innerHTML=content};
+    </script>
 </body>
 </html>

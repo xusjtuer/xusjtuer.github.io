@@ -6,7 +6,7 @@
 
 <title>UE4 基于CustomThunk的泛型蓝图节点语法规范 (一) | 童年的琴-博客</title>
 
-<link rel="shortcut icon" href="https://xusjtuer.github.io/favicon.ico?v=1601289419311">
+<link rel="shortcut icon" href="https://xusjtuer.github.io/favicon.ico?v=1601381270309">
 
 <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://xusjtuer.github.io/styles/main.css">
@@ -38,17 +38,6 @@
 
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
-	
-	<script>
-	var _hmt = _hmt || [];
-	(function() {
-	  var hm = document.createElement("script");
-	  hm.src = "https://hm.baidu.com/hm.js?762fab8d66e007c3dd8e239a6deba5f1";
-	  var s = document.getElementsByTagName("script")[0]; 
-	  s.parentNode.insertBefore(hm, s);
-	})();
-	</script>
-
 </head>
 <body>
 <div class="main gt-bg-theme-color-first">
@@ -59,6 +48,7 @@
             童年的琴-博客
         </div>
     </div>
+    
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
@@ -108,7 +98,7 @@
             
         </div>
         <div style="text-align: center">
-            <form id="gridea-search-form" style="position: relative" data-update="1601289419311" action="/search/index.html">
+            <form id="gridea-search-form" style="position: relative" data-update="1601381270309" action="/search/index.html">
                 <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
                 <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
             </form>
@@ -124,7 +114,7 @@
                 </h2>
                 <div class="post-info">
                     <time class="post-time gt-c-content-color-first">
-                        · 2020-06-23 ·
+                        · 2020/06/23 ·
                     </time>
                     
                         <a href="https://xusjtuer.github.io/tag/JBh2EGYhV/" class="post-tags">
@@ -144,10 +134,13 @@
                         </a>
                     
                 </div>
+                
+                    <img class="post-feature-image" src="https://xusjtuer.github.io/post-images/ue4-post4_generic_bluerpint_function_customthunk1.jpg" alt="">
+                
                 <div class="post-content">
-                    <h1 id="1-overview"><strong>1. Overview</strong></h1>
+                    <h1 id="1-overview">1. Overview</h1>
 <p>本教程旨在讲解基于CustomThunk方式实现泛型蓝图节点的语法规范，主要包括泛型蓝图节点的组成，泛型蓝图节点的声明，自定义Thunk函数体实现，泛型函数（Generic）的实现案例。因内容较多，故分成二期。如觉有帮助，请不吝点赞；如觉无聊，可一带而过。</p>
-<h1 id="2-introduction"><strong>2. Introduction</strong></h1>
+<h1 id="2-introduction">2. Introduction</h1>
 <p>正如前面二期介绍的泛型蓝图节点的应用实例（SORT和GET/SET），泛型蓝图节点应用广泛，并且极大的扩展了蓝图系统的便利性。不同的类型，相同的操作可以使用同一个蓝图节点来完成，减少了代码冗余。本次教程承接上一期内容，继续介绍基于CustomThunk方法的泛型蓝图节点语法规范和实现方式，以下内容为个人分析源码经验所得，如有错漏，敬请谅解，并欢迎在下方评论区中指出，或补充更多相关信息。</p>
 <p>CustomThunk和UK2Node都可以实现泛型蓝图节点，二种实现方法大相径庭，实现难易程度也相差很远，具体选择哪一种方法应当考虑一下情况：</p>
 <p>1）meta说明符功能可以满足要求时，建议优先使用CustomThunk方法，理由：代码少，debug方便；</p>
@@ -156,7 +149,7 @@
 </ol>
 <p>情形一：在编辑模式（Editor）下（非运行状态）需要“修改”蓝图节点引脚（PIN），例如动态增加或删除蓝图节点PIN。</p>
 <p>情形二：当使用CustomThunk方式实现的泛型蓝图节点时，程序员对蓝图引脚的控制只有通过meta说明符，而目前meta说明符功能仍存在部分限制。举例，如ue4内置GetDataTableRow蓝图节点一样，该节点的OutRow 引脚（wildcard PIN）需要根据DataTable 引脚输入的DataTable表动态更改OutRow类型；虽然CustomThunk方法也能实现动态改变引脚类型，但是对于此类情况却无法处理。</p>
-<h1 id="3-required-knowledge"><strong>3. Required Knowledge</strong></h1>
+<h1 id="3-required-knowledge">3. Required Knowledge</h1>
 <ol>
 <li>
 <p>ue4 c++ 类的创建以及c++中定义蓝图可调用函数；</p>
@@ -165,16 +158,16 @@
 <p>熟悉ue4 c++ UFUNCTION宏中常用说明符以及meta说明符；</p>
 </li>
 </ol>
-<h1 id="4-approach"><strong>4. Approach</strong></h1>
-<h2 id="41-泛型蓝图节点c函数组成"><strong>4.1 泛型蓝图节点c++函数组成</strong></h2>
+<h1 id="4-approach">4. Approach</h1>
+<h2 id="41-泛型蓝图节点c函数组成">4.1 泛型蓝图节点c++函数组成</h2>
 <p>查看UE4源代码（在整个解决方案中查找关键字CustomThunk），不难发现绝大多数泛型的蓝图节点的c++ 实现包括三个组成部分：（1）带有UFUNCTION宏的函数声明；（2） 自定义Thunk函数体DECLARE_FUNCTION(execFunctionName)；（3）真正执行泛型逻辑的Generic_FunctionName()泛型函数。</p>
 <p><strong>第（1）部分</strong>，限定了在蓝图系统中该函数以蓝图节点方式出现时的样式，包括函数名、参数列表、返回值以及泛型参数等。UFUNCTION宏中包含CustomThunk说明符，其中泛型参数及依赖关系由meta说明符列表决定。</p>
 <p><strong>第（2）部分</strong>，定义了泛型蓝图函数的Thunk函数体，其实质作用在于运行（Runtime）时获取从蓝图虚拟机VM中传递的参数，其形式规定为 DECLARE_FUNCTION(execFunctionName){}， Function Name为第（1） 部分声明的函数名。</p>
 <p><strong>第（3）部分</strong>，在完整获得蓝图传递的参数之后，调用蓝图函数的泛型版本，也就是第（3）部分定义的泛型函数。该函数是真正执行泛型功能的代码块，如第2期的数组排序功能，第3期的属性GET/SET功能。此函数命名并无强制性要求，可以选择任意合法的函数名，为了便于理解，源代码中一般采用Generic_（Generic）+ FunctionName的形式，Generic的含义就是通常所说的泛型。</p>
-<h2 id="42-泛型蓝图函数声明"><strong>4.2 泛型蓝图函数声明</strong></h2>
+<h2 id="42-泛型蓝图函数声明">4.2 泛型蓝图函数声明</h2>
 <p>如蓝图系统中的变量类型（Variable Type）一样，标识泛型函数通配符(wildcard)参数的说明符也有四种，分别为标识单个变量SingleVariable wildcard类型的&quot;CustomStructureParam&quot;说明符、标识容器Array的&quot;ArrayParm&quot;说明符、标识容器Map的&quot;MapParam&quot;说明符、标识容器Set的&quot;SetParam&quot;说明符以及各种辅助说明符，四种说明符存在部分差异。</p>
 <p>以下代码编译运行环境：<strong>UE4 v4.25 / vs2017</strong></p>
-<h3 id="1single-variable泛型参数的函数声明示例"><strong>（1）Single Variable泛型参数的函数声明示例</strong></h3>
+<p><strong>（1）Single Variable泛型参数的函数声明示例</strong></p>
 <pre><code class="language-c++">public: // Wildcard property
 
 	// Declare a function with an wildcard parameter.
@@ -210,7 +203,7 @@
 <p>（2） 被CustomStructureParam说明符标识的函数参数实为一个占位符，源代码中常用const int32&amp; VariableName表示一个输入类型泛型参数，int32&amp; VariableName表示一个输出类型的泛型参数。（见示例 PropertyFunction3）</p>
 <p>（3） CustomStructureParam说明符标识多个泛型变量时，变量之间需以英文逗号”,”作为分隔符，不得包含其他字符，如空格 、”|”等其他字符；否则虽然可以通过vs编译，但是在蓝图系统不会如期显示。（见示例 PropertyFunction4）</p>
 <p>（4） 限制：目前，在源代码中并没有存在（或者说没发现）标识多个Single Variable泛型参数之间依赖关系的辅助说明符，也就是不能定义多个Single Variable 泛型参数彼此之间的依赖关系。</p>
-<h3 id="2array泛型参数的蓝图函数声明示例"><strong>（2）Array泛型参数的蓝图函数声明示例</strong></h3>
+<p><strong>（2）Array泛型参数的蓝图函数声明示例</strong></p>
 <pre><code class="language-c++">public: // Wildcard TArray
 
 	// Declare a function with one wildcard array parameter.
@@ -245,7 +238,7 @@
 <p>（2） 源代码中常用const TArray<int32>&amp; ArrayName表示一个输入类型的泛型Array参数，TArray<int32>&amp; ArrayName表示一个输出类型的泛型Array参数。（见示例ArrayFunction3）</p>
 <p>（3） ArrayParm说明符标识多个泛型参数变量时，变量之间需以英文逗号”,”分隔，不得包含其他字符，否则虽然可以通过编译，但是在蓝图系统中显示异常。（见示例ArrayFunction5）</p>
 <p>（4） 被ArrayTypeDependentParams说明符标识的多个泛型Array参数的类型相互依赖，在蓝图图表中被调用时只有确定其中之一，余下泛型Array参数随之变化。 更多泛型Array示例见源码：KismetArrayLibrary.h</p>
-<h3 id="3map泛型参数的函数声明示例"><strong>（3）Map泛型参数的函数声明示例</strong></h3>
+<p><strong>（3）Map泛型参数的函数声明示例</strong></p>
 <pre><code class="language-c++">public: // wildcard TMap
 
 	// Declare a function with one wildcard array parameter.
@@ -275,7 +268,7 @@
 <p>（2） 源代码中常用const TMap<int32>&amp; MapName表示一个输入类型的泛型Map参数，TMap<int32>&amp; MapName表示一个输出类型的泛型Map参数。（见示例 MapFunciton4）</p>
 <p>（3） 经试验，声明多个泛型Map参数时无论是采用”,”还是”|”分隔变量，在蓝图系统均出现不同情形的异常情况；以逗号分隔多个泛型Map参数时，蓝图西并没有将这些参数标识为泛型Map引脚。”|”分隔多个参数时，虽然该蓝图节点显示为多个泛型Map引脚，但是当连接上Map类型变量时该引脚并没有更新类型，如上图示例MapFunciton3和 MapFunciton4。<em>不确定这是不是一个引擎bug！？</em></p>
 <p>（4） 被MapKeyParam和MapValueParam说明符标识的泛型参数与被MapParam说明符标识的泛型参数相互依赖。 Map没有类似于” ArrayTypeDependentParams”说明符一样标识多个泛型Map参数依赖关系的辅助说明符” MapTypeDependentParams”，（见示例MapFunciton2）。更多泛型Map示例见源码：BlueprintMapLibrary.h。</p>
-<h3 id="4set泛型参数的函数声明示例"><strong>（4）Set泛型参数的函数声明示例</strong></h3>
+<p><strong>（4）Set泛型参数的函数声明示例</strong></p>
 <pre><code class="language-c++">public:// wildcard Set
 
 	// Declare a function with one wildcard Set parameter.
@@ -316,7 +309,7 @@
 <p>（2） 源代码中常用const TSet<int32>&amp; SetName表示一个输入类型的泛型Set参数，TSet<int32>&amp; SetName表示一个输出类型的泛型Set参数，（见示例SetFunciton1 / SetFunciton5）。</p>
 <p>（3） 声明多个泛型Set参数时, SetParam说明符列表的泛型参数之间可以使用”,”和”|”二种分隔符，（见示例SetFunciton2 / SetFunciton3）；SetParam说明符同时也可以标识有依赖关系的泛型Arrary参数，（见示例SetFunciton4）。</p>
 <p>（4） 多个泛型参数的依赖关系由分隔符的类型决定，以逗号”,”分隔的多个泛型Set参数之间相互独立，以”|”分隔的多个泛型Set参数之间相互依赖，（见示例SetFunciton5 / SetFunciton6）。更多泛型Set示例见源码：BlueprintSetLibrary.h</p>
-<h2 id="43-thunk函数体的实现过程"><strong>4.3 Thunk函数体的实现过程</strong></h2>
+<h2 id="43-thunk函数体的实现过程">4.3 Thunk函数体的实现过程</h2>
 <p>如前所述，在UFUNCTION宏中使用了CustomThunk说明符，需要为该函数自定义Thunk函数体。Thunk函数体主要作用：当蓝图节点被调用时，获取从蓝图虚拟机VM中传递来的参数值，并将值传递给执行特定功能的c++函数。</p>
 <p>首先了解下Thunk函数体的由来。通常定义在c++类中，并用UFUNCTION宏标识为蓝图可调用的函数；编译时，UHT会在该类的generated.h文件中为其自动生成一个形如DECLARE_FUNCTION(execFunctionName) {}的函数体，也就是我们所说的Thunk函数体。</p>
 <p>举例来说，在BlueprintFunctionLibrary中声明如下函数</p>
@@ -350,7 +343,7 @@
 </code></pre>
 <p>（2）当在Thunk函数体中获取多个参数时，获取的先后次序应与函数声明时变量在参数列表中出现的次序保持一致，否则在函数被调用时将引发程序崩溃。</p>
 <p>（3）在Thunk函数体中，泛型蓝图函数的参数列表中确定类型的参数（如bool / uint8 / int32 / float / FName / FString等）和泛型参数（wilcard SingleVariable / TArray / TMap / TSet）获取方式不同。</p>
-<h3 id="a获取确定类型的函数参数的代码的编写方法"><strong>a.获取确定类型的函数参数的代码的编写方法：</strong></h3>
+<p><strong>a.获取确定类型的函数参数的代码的编写方法：</strong></p>
 <p>如下示例，可以先定义一个带该已知类型的函数，编译后在该类.generated.h文件中找到同名的Thunk体后，并定位到获取该类型参数的代码块。按同样的规则，在自定义的Thunk函数体中，编写获取该参数的代码即可，这种方式对于新手非常有用。</p>
 <p>确定类型变量函数声明示例：</p>
 <pre><code class="language-c++">UFUNCTION(BlueprintCallable, Category = &quot;MyProject&quot;)
@@ -410,7 +403,7 @@
 	P_NATIVE_END; \
 } \
 </code></pre>
-<h3 id="b获取泛型参数的代码的编写方法">b.<strong>获取泛型参数的代码的编写方法：</strong></h3>
+<p>b.<strong>获取泛型参数的代码的编写方法：</strong></p>
 <p>ue4 v4.25以上版本 UProperty已被FProperty替代，本质没变，只需稍作修改。以下代码为4.25之前版本。获取泛型参数需要同时获取该变量地址void<em>和变量属性UProperty</em>/ UArrayProperty* / UMapProperty* / USetProperty*，如下示例：</p>
 <p><strong>获取泛型Single Variable</strong></p>
 <pre><code class="language-c++">Stack.StepCompiledIn&lt;UStructProperty&gt;(NULL);
@@ -434,11 +427,25 @@ UProperty* SrcProperty = Cast&lt;UProperty&gt;(Stack.MostRecentProperty);
   void* SetAddr = Stack.MostRecentPropertyAddress;
   USetProperty* SetProperty = Cast&lt;USetProperty&gt;(Stack.MostRecentProperty);
 </code></pre>
-<h1 id="5-conclusion"><strong>5. Conclusion</strong></h1>
+<h1 id="5-conclusion">5. Conclusion</h1>
 <p>以上内容讲述了泛型蓝图节点的三个组成部分的主要功能，以及带泛型参数蓝图节点的声明方法和自定义Thunk函数体的实现过程。为避免文章过长，在下一节 <strong>UE4 基于CustomThunk的泛型蓝图节点语法规范 (二)，</strong> 将分享几个自己编写的泛型蓝图节点**，**让大家对自定义泛型蓝图节点的第三部分-泛型函数（Generic）有加全面而清晰认识。</p>
 
                 </div>
             </article>
+            <div class="toc-container"><ul class="markdownIt-TOC">
+<li><a href="#1-overview">1. Overview</a></li>
+<li><a href="#2-introduction">2. Introduction</a></li>
+<li><a href="#3-required-knowledge">3. Required Knowledge</a></li>
+<li><a href="#4-approach">4. Approach</a>
+<ul>
+<li><a href="#41-%E6%B3%9B%E5%9E%8B%E8%93%9D%E5%9B%BE%E8%8A%82%E7%82%B9c%E5%87%BD%E6%95%B0%E7%BB%84%E6%88%90">4.1 泛型蓝图节点c++函数组成</a></li>
+<li><a href="#42-%E6%B3%9B%E5%9E%8B%E8%93%9D%E5%9B%BE%E5%87%BD%E6%95%B0%E5%A3%B0%E6%98%8E">4.2 泛型蓝图函数声明</a></li>
+<li><a href="#43-thunk%E5%87%BD%E6%95%B0%E4%BD%93%E7%9A%84%E5%AE%9E%E7%8E%B0%E8%BF%87%E7%A8%8B">4.3 Thunk函数体的实现过程</a></li>
+</ul>
+</li>
+<li><a href="#5-conclusion">5. Conclusion</a></li>
+</ul>
+</div>
         </div>
 
         
@@ -532,10 +539,6 @@ UProperty* SrcProperty = Cast&lt;UProperty&gt;(Stack.MostRecentProperty);
     <div class="footer-info">
         Powered by <a href="https://github.com/xusjtuer" target="_blank">xusjtuer</a>
     </div>
-    <div>
-        Theme by <a href="https://imhanjie.com/" target="_blank">imhanjie</a>, Powered by <a
-                href="https://github.com/getgridea/gridea" target="_blank">Gridea | <a href="https://xusjtuer.github.io/atom.xml" target="_blank">RSS</a></a>
-    </div>
 </div>
 
 <script>
@@ -544,20 +547,15 @@ UProperty* SrcProperty = Cast&lt;UProperty&gt;(Stack.MostRecentProperty);
 
     </div>
 </div>
-
-    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-	<span id="busuanzi_container_site_pv">
-		<sup style="color:grey">总访问量<span id="busuanzi_value_site_pv"></span>次</sup>
-	</span>
-	<sup><span style="color:grey" class="post-meta-divider">|</span></sup>
-	<span id="busuanzi_container_site_uv">
-		<sup style="color:grey">访问人数<span id="busuanzi_value_site_uv" ></span>位</sup>
-	</span>
-	<sup><span style="color:grey" class="post-meta-divider">|</span></sup>
-	<span id="/ue4-post4_generic_bluerpint_function_customthunk1/" class="leancloud_visitors" data-flag-title="UE4 基于CustomThunk的泛型蓝图节点语法规范 (一)">
-		<sup style="color:grey" class="post-meta-item-text">阅读量</sup>
-		<sup style="color:grey" class="leancloud-visitors-count"></sup>
-	</span>
-
+<script>
+    "use strict";!function(){for(var n=document.getElementsByTagName("pre"),e=n.length,s=0;s<e;s++){for(var a=n[s].innerHTML.split(/\n/).length,r=0;r<a-1;r++){n[s].getElementsByTagName("span")[0].innerHTML+="<span>"+(r+1)+"</span>"}}}();
+    let mainNavLinks=document.querySelectorAll(".markdownIt-TOC a");window.addEventListener("scroll",event=>{let fromTop=window.scrollY;mainNavLinks.forEach((link,index)=>{let section=document.getElementById(decodeURI(link.hash).substring(1));let nextSection=null
+    if(mainNavLinks[index+1]){nextSection=document.getElementById(decodeURI(mainNavLinks[index+1].hash).substring(1));}
+    if(section.offsetTop<=fromTop){if(nextSection){if(nextSection.offsetTop>fromTop){link.classList.add("currentToc");}else{link.classList.remove("currentToc");}}else{link.classList.add("currentToc");}}else{link.classList.remove("currentToc");}});});
+    var list=document.querySelectorAll(".katex");for(var i=0;i<list.length;i++){list[i].style.display="unset"};
+    var h=document.documentElement,b=document.body,st="scrollTop",sh="scrollHeight",progress=document.querySelector(".progress"),scroll;document.addEventListener("scroll",function(){scroll=(h[st]||b[st])/((h[sh]||b[sh])-h.clientHeight)*100;progress.style.setProperty("--scroll",scroll+"%")});
+    var wxScale=new WxScale({fullPage:document.querySelector("#fullPage"),canvas:document.querySelector("#canvas")});var imgBox=document.querySelectorAll("#md_block img");for(var i=0;i<imgBox.length;i++){imgBox[i].onclick=function(e){wxScale.start(this)}};
+    content="本文最后更新于2020/06/23，已超过 1 年没有更新，涉及的内容可能已经失效！";var date1="2020-06-23 16:18:00";date1=date1.replace("-","/");var date2=new Date();var date3=date2.getTime()-new Date(date1).getTime();var days=Math.floor(date3/(24*3600*1000));if(days>=365){document.getElementById("warn").innerHTML=content};
+    </script>
 </body>
 </html>
