@@ -1,11 +1,10 @@
 <html>
-
 <head>
     <meta charset="utf-8"/>
 <meta name="description" content=""/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 
-<title>友情链接 - 童年的琴-博客</title>
+<title>UE4 网络通信之HTTP | 童年的琴-博客</title>
 
 <link rel="shortcut icon" href="https://xusjtuer.github.io/favicon.ico?v=1602243949640">
 
@@ -38,12 +37,11 @@
     </script>
 
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
 </head>
-
 <body>
 <div class="main gt-bg-theme-color-first">
-        <div class="main-content">
-            <nav class="navbar navbar-expand-lg">
+    <nav class="navbar navbar-expand-lg">
     <div class="navbar-brand">
         <img class="user-avatar" src="/images/avatar.png" alt="头像">
         <div class="site-name gt-c-content-color-first">
@@ -108,25 +106,82 @@
     </div>
 </nav>
 
-            <div class="post-container">
-                <div class="post-detail">
-                    <article>
-                        <!-- <div class="post-content-wrapper"> -->
-                            <div class="post-content">
-                                <div class="friends-desc">
-                                    
-                                </div>
-                                <h3 id="linklist">友链列表</h3>
-                                
-                                    
-                                
-                            </div>
-                        <!-- </div> -->
-                    </article>
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    UE4 网络通信之HTTP
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2020/10/08 ·
+                    </time>
+                    
+                        <a href="https://xusjtuer.github.io/tag/lRnljL5nF/" class="post-tags">
+                            # http
+                        </a>
+                    
+                        <a href="https://xusjtuer.github.io/tag/chYkJdpez/" class="post-tags">
+                            # ue4 c++
+                        </a>
+                    
+                        <a href="https://xusjtuer.github.io/tag/I_n8ZHBFK/" class="post-tags">
+                            # blueprint
+                        </a>
+                    
                 </div>
                 
-                    
-                        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.css">
+                <div class="post-content">
+                    <p><strong>摘要</strong>：HTTP协议（HyperText Transfer Protocol，超文本传输协议）是因特网上应用最为广泛的一种网络传输协议，UE4源代码中内置了HTTP模块，并且已经涵盖了HTTP请求的所有功能。由于该模块的函数并未暴露给蓝图系统，对于使用蓝图进行开发的程序员来说，处理HTTP请求（Http Request）时可能遇到很大的困难。本教程旨在讲解使用HttpWizard插件，纯蓝图方式处理HTTP请求的方法，以及使用泛型蓝图节点解析HTTP响应（Http Response）的Json数据。</p>
+<p><strong>关键字</strong>：虚幻引擎；HTTP；Json；泛型</p>
+<p><span style='font-size:30px;'><strong>HTTP Of UE4 Network Communication</strong></span></p>
+<p><strong>Abstract</strong>：HTTP protocol (HyperText Transfer Protocol) is the most widely used network transmission protocol on the Internet. The HTTP module is built into the source code of Unreal Engine 4, and it has covered all the functions of HTTP requests. Since the functions of this module are not exposed to the Blueprint system, programmers who use blueprints for development may encounter great difficultieOfs when processing HTTP requests. This tutorial aims to explain the use of the HttpWizard plugin, the method of processing HTTP requests in pure blueprint way, and the use of generic blueprint nodes to parse the Json data of the HTTP response (Http Response).</p>
+<p><strong>Key words</strong>: Unreal Engine; HTTP; Json; Generic</p>
+<h1 id="1-motivation-why-http-wizard">1. Motivation -Why Http Wizard ?</h1>
+<p>HTTP网络通信在UE4开发中有着举足轻重的地位，特别是在登陆验证、文件传输、数据驱动等逻辑中有着广泛的应用；熟练掌握UE4 HTTP模块，对于项目开发几乎是不可或缺。</p>
+<p>虚幻商城已经有多款HTTP请求的插件，大多存在功能不全、使用困难等问题。</p>
+<p>VaRest插件不足</p>
+<blockquote>
+<p>https://unrealengine.com/marketplace/zh-CN/product/varest-plugin</p>
+</blockquote>
+<p>解析Json数据十分繁琐；</p>
+<p>Http请求和Json解析混合，逻辑较为混乱</p>
+<p>Json解析功能不全，</p>
+<h1 id="2-introduction">2. Introduction</h1>
+<h1 id="3-feature">3. Feature</h1>
+<p>跨平台</p>
+<p>模块化</p>
+<p>功能全</p>
+<p>解析（泛型解析）</p>
+<p>轻量高效，无崩溃（稳定性好），强壮的，封装（源代码）</p>
+<h1 id="4-usage">4. Usage</h1>
+<p>通常的http网络</p>
+<p>python 本地服务器</p>
+<p>Http request 参数设置</p>
+<p>蓝图节点</p>
+<h1 id="5-conclusion">5. Conclusion</h1>
+<p>类图</p>
+<p>UHttpRequest UHttpResponse</p>
+
+                </div>
+            </article>
+            <div class="toc-container"><ul class="markdownIt-TOC">
+<li><a href="#1-motivation-why-http-wizard">1. Motivation -Why Http Wizard ?</a></li>
+<li><a href="#2-introduction">2. Introduction</a></li>
+<li><a href="#3-feature">3. Feature</a></li>
+<li><a href="#4-usage">4. Usage</a></li>
+<li><a href="#5-conclusion">5. Conclusion</a></li>
+</ul>
+</div>
+        </div>
+
+        
+
+        
+
+        
+            
+                <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.css">
 <script src="https://cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.js"></script>
 <script>
     // md5.min.js
@@ -169,15 +224,14 @@
 
 </script>
 
-                    
+            
 
-                    
-                
-            </div>
+            
+        
 
+        
 
-
-            <div class="site-footer gt-c-content-color-first">
+        <div class="site-footer gt-c-content-color-first">
     <div class="slogan gt-c-content-color-first">海阔凭鱼跃，天高任鸟飞</div>
     <div class="social-container">
         
@@ -211,8 +265,32 @@
   hljs.initHighlightingOnLoad()
 </script>
 
-        </div>
     </div>
-</body>
+</div>
 
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+	<span id="busuanzi_container_site_pv">
+		<sup style="color:grey">总访问量<span id="busuanzi_value_site_pv"></span>次</sup>
+	</span>
+	<sup><span style="color:grey" class="post-meta-divider">|</span></sup>
+	<span id="busuanzi_container_site_uv">
+		<sup style="color:grey">访问人数<span id="busuanzi_value_site_uv" ></span>位</sup>
+	</span>
+	<sup><span style="color:grey" class="post-meta-divider">|</span></sup>
+	<span id="/ue4-post9_http-requent/" class="leancloud_visitors" data-flag-title="UE4 网络通信之HTTP">
+		<sup style="color:grey" class="post-meta-item-text">阅读量</sup>
+		<sup style="color:grey" class="leancloud-visitors-count"></sup>
+	</span>
+
+<script>
+    "use strict";!function(){for(var n=document.getElementsByTagName("pre"),e=n.length,s=0;s<e;s++){for(var a=n[s].innerHTML.split(/\n/).length,r=0;r<a-1;r++){n[s].getElementsByTagName("span")[0].innerHTML+="<span>"+(r+1)+"</span>"}}}();
+    let mainNavLinks=document.querySelectorAll(".markdownIt-TOC a");window.addEventListener("scroll",event=>{let fromTop=window.scrollY;mainNavLinks.forEach((link,index)=>{let section=document.getElementById(decodeURI(link.hash).substring(1));let nextSection=null
+    if(mainNavLinks[index+1]){nextSection=document.getElementById(decodeURI(mainNavLinks[index+1].hash).substring(1));}
+    if(section.offsetTop<=fromTop){if(nextSection){if(nextSection.offsetTop>fromTop){link.classList.add("currentToc");}else{link.classList.remove("currentToc");}}else{link.classList.add("currentToc");}}else{link.classList.remove("currentToc");}});});
+    var list=document.querySelectorAll(".katex");for(var i=0;i<list.length;i++){list[i].style.display="unset"};
+    var h=document.documentElement,b=document.body,st="scrollTop",sh="scrollHeight",progress=document.querySelector(".progress"),scroll;document.addEventListener("scroll",function(){scroll=(h[st]||b[st])/((h[sh]||b[sh])-h.clientHeight)*100;progress.style.setProperty("--scroll",scroll+"%")});
+    var wxScale=new WxScale({fullPage:document.querySelector("#fullPage"),canvas:document.querySelector("#canvas")});var imgBox=document.querySelectorAll("#md_block img");for(var i=0;i<imgBox.length;i++){imgBox[i].onclick=function(e){wxScale.start(this)}};
+    content="本文最后更新于2020/10/08，已超过 1 年没有更新，涉及的内容可能已经失效！";var date1="2020-10-08 10:43:46";date1=date1.replace("-","/");var date2=new Date();var date3=date2.getTime()-new Date(date1).getTime();var days=Math.floor(date3/(24*3600*1000));if(days>=365){document.getElementById("warn").innerHTML=content};
+</script>
+</body>
 </html>
